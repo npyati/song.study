@@ -1,0 +1,14 @@
+# Your music and your notes are yours — they never belong in this repo.
+*.mp3
+*.m4a
+*.wav
+*.flac
+*.aiff
+*.notes.md
+notes/
+library/
+
+# Scratch file for driving the build, not part of the app
+todo.md
+
+.DS_Store

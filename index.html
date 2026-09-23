@@ -1,0 +1,1742 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>song.study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --ground:#F7F6F3;
+  --surface:#FFFFFF;
+  --surface-2:#F4F2EE;
+  --line:#E5E2DB;
+  --line-2:#D3CFC6;
+  --edge-soft:#E5E2DB;
+  --ink:#121211;
+  --ink-2:#6B6760;
+  --ink-3:#A09B93;
+  --accent:#FF4A00;
+  --blue:#2F5CFF;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --ground:#0B0B0A;
+    --surface:#121211;
+    --surface-2:#171715;
+    --line:#242421;
+    --line-2:#34332E;
+    --edge-soft:#242421;
+    --ink:#F2F0EA;
+    --ink-2:#8E8A81;
+    --ink-3:#5E5A53;
+    --accent:#FF5C1A;
+    --blue:#6486FF;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#0B0B0A;
+  --surface:#121211;
+  --surface-2:#171715;
+  --line:#242421;
+  --line-2:#34332E;
+  --edge-soft:#242421;
+  --ink:#F2F0EA;
+  --ink-2:#8E8A81;
+  --ink-3:#5E5A53;
+  --accent:#FF5C1A;
+  --blue:#6486FF;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font:400 12px/1.5 "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;
+  padding:0 16px;
+  padding-block:22px 30px;
+  overflow-x:hidden;
+}
+.mono{font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums}
+.lbl{
+  font-size:10px; font-weight:400; letter-spacing:.06em; text-transform:lowercase;
+  color:var(--ink-3);
+}
+
+/* ---------- frame ---------- */
+.device{
+  max-width:1180px; margin:0 auto;
+  background:var(--surface);
+  border:1px solid var(--line-2);
+}
+.rail{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  padding:9px 14px;
+  border-bottom:1px solid var(--line-2);
+}
+.brand{display:flex;align-items:center;gap:8px}
+.brand b{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:lowercase}
+.dot{width:7px;height:7px;background:var(--accent);flex:none}
+.spacer{flex:1 1 auto}
+
+/* ---------- controls ---------- */
+button{font:inherit;color:inherit}
+.key{
+  appearance:none; cursor:pointer;
+  background:transparent;
+  border:1px solid var(--line-2);
+  border-radius:0;
+  height:26px; padding:0 10px;
+  font-family:"IBM Plex Mono", ui-monospace, monospace;
+  font-size:10.5px; font-weight:400; letter-spacing:.04em; text-transform:lowercase;
+  color:var(--ink-2);
+  transition:color .1s linear, border-color .1s linear, background-color .1s linear;
+}
+.key:hover:not(:disabled){color:var(--ink);border-color:var(--ink-3)}
+.key.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.key[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.key.sq{width:26px;padding:0;display:grid;place-items:center;font-size:11px}
+.key:focus-visible,textarea:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:1.5px solid var(--accent);outline-offset:1px}
+.key:disabled{opacity:.3;cursor:default}
+
+/* ---------- readouts ---------- */
+.lcd{display:flex;align-items:stretch;flex-wrap:wrap;gap:0}
+.readout{
+  display:flex;flex-direction:column;justify-content:center;gap:4px;min-width:0;
+  padding:12px 20px; border-left:1px solid var(--line);
+}
+.readout:first-child{border-left:0;padding-left:14px}
+.readout .v{
+  font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums;
+  font-size:26px; font-weight:400; line-height:1; letter-spacing:-.035em;
+  color:var(--ink);
+}
+.readout .v.sm{font-size:13px;letter-spacing:0}
+.readout.hot .v{color:var(--accent)}
+.lcd .spacer{border-left:0}
+.armed{
+  display:flex;align-items:center;gap:7px;padding:12px 14px;
+  border-left:1px solid var(--line);opacity:.2;transition:opacity .12s linear;
+}
+.armed.live{opacity:1}
+.armed.live .dot{animation:blink 1.1s steps(1,end) infinite}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:.15}}
+@media (prefers-reduced-motion:reduce){.armed.live .dot{animation:none}}
+
+/* ---------- modules ---------- */
+.mod{padding:14px;border-bottom:1px solid var(--line-2)}
+.mod.flush{padding:0}
+.mod:last-child{border-bottom:0}
+.modhead{display:flex;align-items:center;gap:10px;margin-bottom:9px;flex-wrap:wrap}
+
+/* ---------- scope ---------- */
+.scope{
+  position:relative;
+  border:1px solid var(--line);
+  background:var(--surface);
+  overflow:hidden;
+  user-select:none;
+}
+#pins{position:relative;height:44px;border-bottom:1px solid var(--line)}
+.pin{
+  position:absolute; top:0; width:8px; height:8px; margin-left:-4px;
+  border:0; padding:0; border-radius:0; cursor:pointer;
+}
+.pin.flag{height:14px;margin-top:-3px}
+.pin:hover{outline:1px solid var(--ink);outline-offset:1px;z-index:3}
+.pin.sel{outline:1.5px solid var(--ink);outline-offset:2px;z-index:4}
+#wave{display:block;width:100%;height:136px}
+.scrub{position:absolute;inset:44px 0 0 0;cursor:col-resize}
+.ghost{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.ghost p{color:var(--ink-3);font-size:10.5px;letter-spacing:.06em;text-transform:lowercase;margin:0}
+
+/* ---------- work ---------- */
+.work{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.82fr)}
+.work > *{min-width:0}
+.capture{padding:14px;border-right:1px solid var(--line-2)}
+.ledger{padding:14px;background:var(--surface-2)}
+
+.promptwrap{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+.prompt{
+  display:flex;gap:10px;align-items:baseline;
+  padding:8px 11px;
+  background:var(--surface-2);
+  border-left:2px solid var(--accent);
+}
+.ledger .prompt{background:var(--surface)}
+.prompt .n{font-size:10px;color:var(--accent);flex:none;letter-spacing:.04em}
+.prompt .t{flex:1 1 auto;min-width:0}
+.prompt input{
+  all:unset;font-size:12px;color:var(--ink);width:100%;
+  border-bottom:1px solid transparent;
+}
+.prompt input{border-bottom-color:var(--line-2)}   /* always reads as editable */
+.prompt input:hover{border-bottom-color:var(--ink-3)}
+.prompt input:focus{border-bottom-color:var(--accent)}
+
+#entry{
+  width:100%;
+  background:var(--surface);
+  border:1px solid var(--line-2);
+  border-radius:0;
+  color:var(--ink);
+  font:400 14px/1.55 Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  padding:10px 11px;
+  min-height:78px; resize:vertical;
+  outline:none;
+}
+#entry:focus{border-color:var(--accent)}
+#entry::placeholder{color:var(--ink-3)}
+.entrybar{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.stamp{
+  font-size:12px;letter-spacing:-.01em;color:var(--accent);
+  border:1px solid var(--accent);padding:3px 7px;
+  opacity:0;transition:opacity .12s linear;
+}
+.stamp.live{opacity:1}
+
+.keymap{margin:16px 0 0;padding:12px 0 0;border-top:1px solid var(--line);
+  display:grid;grid-template-columns:auto 1fr;gap:5px 14px;align-items:baseline}
+.keymap dt{font-size:10px;color:var(--ink-2);white-space:nowrap;letter-spacing:.03em}
+.keymap dd{margin:0;font-size:11px;color:var(--ink-3)}
+
+/* ---------- ledger ---------- */
+#notes{display:flex;flex-direction:column;max-height:430px;overflow-y:auto;margin:0;padding:0;list-style:none}
+.passhead{
+  display:flex;align-items:center;gap:8px;
+  padding:12px 0 5px;position:sticky;top:0;background:var(--surface-2);z-index:2;
+}
+.passhead:first-child{padding-top:2px}
+.passhead .bar{height:1px;flex:1 1 auto;background:var(--line-2)}
+.note{
+  display:flex;gap:8px;
+  padding:6px 8px 6px 6px;cursor:pointer;align-items:baseline;
+  border-left:2px solid transparent;
+}
+.note:hover{background:var(--surface)}
+.note.sel{background:var(--surface);border-left-color:var(--accent)}
+.note .t{font-size:10.5px;color:var(--ink-2);padding-top:3px;white-space:nowrap}
+.note.sel .t{color:var(--accent)}
+.note .x{
+  font-family:Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size:13px;line-height:1.45;overflow-wrap:anywhere;
+  flex:1 1 auto;min-width:0;
+}
+.note .t{flex:none}
+/* the glyphs stay small; the hit areas are padded out to ~24x27 */
+.star,.del{
+  flex:none;background:none;border:0;cursor:pointer;
+  line-height:1.35;color:var(--ink-3);
+  font-family:"IBM Plex Mono", ui-monospace, monospace;
+}
+.star{font-size:11px;padding:6px 8px;margin:-6px -4px -6px -7px}
+.star:hover{color:var(--ink)}
+.star.on{color:var(--accent)}
+.del{font-size:13px;padding:6px 9px;margin:-6px -8px -6px 0}
+.del:hover{color:var(--accent)}
+.note:hover .del,.note:focus-within .del{color:var(--ink-2)}
+.note:hover .del:hover,.note .del:hover{color:var(--accent)}
+
+/* segmented control — both choices visible, the filled one is what you get */
+#bindMd,#sstat{text-transform:none}   /* filenames keep their own casing */
+.seg{display:inline-flex;height:26px;border:1px solid var(--line-2)}
+.seg button{
+  appearance:none;background:transparent;border:0;cursor:pointer;
+  padding:0 11px;font-family:"IBM Plex Mono", ui-monospace, monospace;
+  font-size:10.5px;letter-spacing:.04em;text-transform:lowercase;color:var(--ink-3);
+}
+.seg button + button{border-left:1px solid var(--line-2)}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+.seg button:focus-visible{outline:1.5px solid var(--accent);outline-offset:-1px}
+
+[hidden]{display:none !important}
+.pnum{flex:none;font-size:10px;letter-spacing:.03em}
+#notes.by-pass .pnum{display:none}
+.note .tag{color:var(--blue)}
+.note .x.editing{
+  outline:1px solid var(--accent);outline-offset:3px;
+  white-space:pre-wrap;cursor:text;
+}
+.empty{color:var(--ink-3);font-size:11px;padding:16px 2px;line-height:1.65;max-width:52ch}
+
+.files{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.fchip{
+  display:inline-flex;align-items:center;gap:7px;
+  background:transparent;border:1px solid var(--line-2);border-radius:0;
+  height:26px;padding:0 10px;font-size:10.5px;cursor:pointer;color:var(--ink-2);max-width:230px;
+}
+.fchip b{font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fchip .dot{background:var(--line-2)}
+.fchip.on{border-color:var(--ink-3);color:var(--ink)}
+.fchip.ghost{border-style:dashed;color:var(--ink-3)}
+.fchip .n{color:var(--ink-3);font-size:9.5px}
+#sstat{white-space:nowrap}
+#sstat.warn{color:var(--accent)}
+.fchip.on .dot{background:var(--accent)}
+
+body.drag .device{border-color:var(--accent)}
+.hidden{display:none !important}
+
+@media (max-width:820px){
+  .work{grid-template-columns:minmax(0,1fr)}
+  .capture{border-right:0;border-bottom:1px solid var(--line-2)}
+  #wave{height:108px}
+  .readout{padding:10px 14px}
+  .readout .v{font-size:19px}
+  .readout:nth-child(n+3){border-left:0}
+  #notes{max-height:320px}
+}
+</style>
+</head>
+<body>
+
+<div class="device">
+
+  <!-- ============ top rail ============ -->
+  <div class="rail">
+    <div class="brand"><span class="dot"></span><b>song.study</b></div>
+    <div class="files" id="files"></div>
+    <div class="spacer"></div>
+    <span class="lbl" id="sstat">no study open</span>
+    <button class="key" id="load">Open MP3</button>
+    <button class="key" id="bindMd" disabled title="Save this study to a .md file on disk">save to .md</button>
+    <button class="key" id="expMd" disabled>.md</button>
+    <button class="key" id="expJson" disabled>.json</button>
+    <button class="key" id="theme" title="Toggle theme">◐</button>
+    <input type="file" id="file" accept="audio/*,.json,.md" multiple class="hidden">
+  </div>
+
+  <!-- ============ lcd ============ -->
+  <div class="mod flush">
+    <div class="lcd">
+      <div class="readout hot">
+        <span class="lbl">Position</span>
+        <span class="v" id="rPos">–:––.–</span>
+      </div>
+      <div class="readout">
+        <span class="lbl">Remain</span>
+        <span class="v" id="rRem">–:––</span>
+      </div>
+      <div class="readout">
+        <span class="lbl">Pass</span>
+        <span class="v" id="rPass">–/––</span>
+      </div>
+      <div class="readout">
+        <span class="lbl">Rate</span>
+        <span class="v" id="rRate">1.00×</span>
+      </div>
+      <div class="readout">
+        <span class="lbl">Lag</span>
+        <span class="v" id="rLag">1.5s</span>
+      </div>
+      <div class="spacer"></div>
+      <div class="readout" style="max-width:240px">
+        <span class="lbl">Track</span>
+        <span class="v sm" id="rTrack" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">no file loaded</span>
+      </div>
+      <div class="armed" id="armed">
+        <span class="dot"></span><span class="lbl" style="color:var(--accent)">Armed</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ scope ============ -->
+  <div class="mod">
+    <div class="modhead">
+      <span class="lbl">Waveform</span>
+      <span class="lbl" id="heatLbl" style="color:var(--ink-2)">· pins stack by pass · band below = time spent</span>
+      <div class="spacer"></div>
+      <button class="key" id="setA" disabled>Loop A</button>
+      <button class="key" id="setB" disabled>Loop B</button>
+      <button class="key" id="clrLoop" disabled>Clear</button>
+    </div>
+    <div class="scope">
+      <div id="pins"></div>
+      <canvas id="wave"></canvas>
+      <div class="scrub" id="scrub"></div>
+      <div class="ghost" id="ghost"><p>drop an mp3 anywhere</p></div>
+    </div>
+    <div class="modhead" style="margin:10px 0 0">
+      <button class="key sq" id="play" disabled>▶</button>
+      <button class="key sq" id="back" disabled title="Back 5s">«</button>
+      <button class="key sq" id="fwd" disabled title="Forward 5s">»</button>
+      <button class="key sq" id="top" disabled title="Restart pass">↺</button>
+      <span style="width:8px"></span>
+      <button class="key" id="repeat" aria-pressed="true">Auto-repeat</button>
+      <button class="key" id="slow">0.75×</button>
+      <button class="key" id="half">0.5×</button>
+      <div class="spacer"></div>
+      <span class="lbl">Lag offset</span>
+      <button class="key" id="lagDn">–</button>
+      <button class="key" id="lagUp">+</button>
+      <span style="width:8px"></span>
+      <span class="lbl">Passes</span>
+      <button class="key" id="passDn">–</button>
+      <button class="key" id="passUp">+</button>
+    </div>
+  </div>
+
+  <!-- ============ work ============ -->
+  <div class="work">
+    <div class="capture">
+      <div class="promptwrap">
+        <span class="lbl">listening prompt — what this pass is for</span>
+        <div class="prompt">
+          <span class="n" id="pn">01</span>
+          <span class="t"><input id="ladder" value="just listen — no notes"
+            title="Editable. Each pass keeps its own prompt."
+            aria-label="Listening prompt for this pass"></span>
+        </div>
+      </div>
+      <textarea id="entry" placeholder="Start typing the moment you hear it — the timestamp is taken at your first keystroke." aria-label="Note"></textarea>
+      <div class="entrybar">
+        <span class="stamp mono" id="stamp">0:00.0</span>
+        <span class="lbl" id="hint">Enter to log · Shift+Enter for a new line</span>
+        <div class="spacer"></div>
+        <button class="key" id="commit" disabled>Log note</button>
+      </div>
+      <dl class="keymap">
+        <dt>space</dt><dd>play / pause (when the box is empty)</dd>
+        <dt>← →</dt><dd>scrub 5s (when the box is empty)</dd>
+        <dt>alt ← →</dt><dd>nudge the pending stamp while typing</dd>
+        <dt>← →</dt><dd>nudge a selected note ±0.25s, shift for ±1s</dd>
+        <dt>#tag</dt><dd>anything with a hash becomes a tag</dd>
+        <dt>click</dt><dd>edit a note where it sits — enter saves, esc reverts</dd>
+        <dt>esc</dt><dd>clear the box / deselect</dd>
+        <dt>☆ ×</dt><dd>flag a note, or delete it — ⌘Z brings a deleted note back</dd>
+      </dl>
+    </div>
+
+    <div class="ledger">
+      <div class="modhead">
+        <span class="lbl">Ledger</span>
+        <span class="lbl mono" id="count" style="color:var(--ink-2)">0 notes</span>
+        <div class="spacer"></div>
+        <button class="key" id="undo" hidden>undo delete</button>
+        <button class="key" id="starBtn" title="Show only flagged notes">☆ flagged</button>
+        <span class="lbl">sort</span>
+        <div class="seg" role="group" aria-label="Sort notes">
+          <button id="sortPass" aria-pressed="true">pass</button>
+          <button id="sortTime" aria-pressed="false">time</button>
+        </div>
+        <button class="key" id="filter">All passes</button>
+      </div>
+      <ul id="notes"><li class="empty">Nothing logged yet. Open an MP3, hit play, and type whenever something catches you — the stamp is set on your first keystroke, then pulled back by the lag offset. Notes save themselves as you go — the readout up top says when.</li></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ===================== constants ===================== */
+const PASS_COLORS = ["#FF4A00","#FF7A1A","#FF9E22","#FFC02E","#CBC733","#84C33E","#27C08A","#2AA6C0","#3A6BFF","#7A4DFF"];
+const DEFAULT_LADDER = [
+  "just listen — no notes",
+  "form — where are the sections",
+  "drums only",
+  "bass only",
+  "lyrics",
+  "lead vocal + harmony production",
+  "arrangement — what enters, what leaves",
+  "the mix — where is everything",
+  "the moment you keep returning to",
+  "free — write the thesis"
+];
+const PREROLL = 4;
+
+/* ===================== state ===================== */
+const audio = new Audio();
+audio.preload = "auto";
+let study = null;            // active study record
+const library = new Map();   // id -> {file, url, study, peaks}
+let peaks = null;            // {min:Float32Array, max:Float32Array}
+let selected = null;         // selected note id
+let pending = null;          // pending anchor time (seconds)
+let filterPass = 0;          // 0 = all
+let sortMode = "pass";       // "pass" = grouped by pass, "time" = straight down the song
+let starOnly = false;
+let loopA = null, loopB = null;
+let counted = false;
+let lastFrame = 0;
+let heatDirty = true, lastHeatPaint = 0;
+
+/* ===================== dom ===================== */
+const $ = (id) => document.getElementById(id);
+const els = {};
+["files","load","file","expMd","expJson","theme","rPos","rRem","rPass","rRate","rLag","rTrack","sstat","bindMd","starBtn","sortPass","sortTime","undo",
+ "armed","pins","wave","scrub","ghost","setA","setB","clrLoop","play","back","fwd","top","repeat",
+ "slow","half","lagDn","lagUp","passDn","passUp","pn","ladder","entry","stamp","commit","notes",
+ "count","filter","hint","heatLbl"].forEach(k => els[k] = $(k));
+
+const ctx = els.wave.getContext("2d");
+const layer = document.createElement("canvas");
+const lctx = layer.getContext("2d");
+
+/* ===================== helpers ===================== */
+const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
+
+function fmt(s, dec){
+  if (!isFinite(s) || s < 0) s = 0;
+  const m = Math.floor(s / 60);
+  const r = s - m * 60;
+  return dec ? `${m}:${r.toFixed(1).padStart(4,"0")}` : `${m}:${String(Math.floor(r)).padStart(2,"0")}`;
+}
+function passColor(p){ return PASS_COLORS[(p - 1) % PASS_COLORS.length]; }
+function parseTags(text){
+  const out = [];
+  const re = /#([\p{L}\p{N}_-]+)/gu;
+  let m;
+  while ((m = re.exec(text))) out.push(m[1].toLowerCase());
+  return out;
+}
+function escapeHtml(s){
+  return s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+/* ===================== storage (IndexedDB, best effort) ===================== */
+/* IndexedDB is blocked or silently hangs on some file:// setups. Every call
+   races a timeout so a stalled backend can never stall the app — localStorage
+   is already the durable path. */
+function withTimeout(promise, ms, fallback){
+  return Promise.race([
+    Promise.resolve(promise).catch(() => fallback),
+    new Promise(res => setTimeout(() => res(fallback), ms))
+  ]);
+}
+
+let dbp = null;
+function db(){
+  if (dbp) return dbp;
+  dbp = new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open("song-study", 2);
+      r.onupgradeneeded = () => {
+        const d = r.result;
+        if (!d.objectStoreNames.contains("studies")) d.createObjectStore("studies", { keyPath: "id" });
+        if (!d.objectStoreNames.contains("handles")) d.createObjectStore("handles", { keyPath: "id" });
+      };
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    } catch (e) { rej(e); }
+  }).catch(() => null);
+  dbp = withTimeout(dbp, 2000, null);
+  return dbp;
+}
+async function dbGet_raw(id){
+  try {
+    const d = await db(); if (!d) return null;
+    return await new Promise(res => {
+      const r = d.transaction("studies").objectStore("studies").get(id);
+      r.onsuccess = () => res(r.result || null);
+      r.onerror = () => res(null);
+    });
+  } catch (e) { return null; }
+}
+async function dbPut_raw(rec){
+  try {
+    const d = await db(); if (!d) return false;
+    return await new Promise(res => {
+      const tx = d.transaction("studies", "readwrite");
+      tx.objectStore("studies").put(rec);
+      tx.oncomplete = () => res(true);
+      tx.onerror = tx.onabort = () => res(false);
+    });
+  } catch (e) { return false; }
+}
+async function dbAll_raw(){
+  try {
+    const d = await db(); if (!d) return [];
+    return await new Promise(res => {
+      const r = d.transaction("studies").objectStore("studies").getAll();
+      r.onsuccess = () => res(r.result || []);
+      r.onerror = () => res([]);
+    });
+  } catch (e) { return []; }
+}
+async function dbGet(id){ return withTimeout(dbGet_raw(id), 1500, null); }
+async function dbAll(){ return withTimeout(dbAll_raw(), 1500, []); }
+async function dbPut(rec){ return withTimeout(dbPut_raw(rec), 1500, false); }
+
+async function dbDel(id){
+  try { const d = await db(); if (d) d.transaction("studies","readwrite").objectStore("studies").delete(id); } catch (e) {}
+}
+
+/* localStorage mirror — synchronous, works on file://, survives an unload
+   that an async IndexedDB write would not. Either backend alone is enough. */
+const LSP = "songstudy:";
+function lsSave(rec){
+  try { localStorage.setItem(LSP + rec.id, JSON.stringify(rec)); return true; }
+  catch (e) { return false; }
+}
+function lsGet(id){
+  try { const v = localStorage.getItem(LSP + id); return v ? JSON.parse(v) : null; }
+  catch (e) { return null; }
+}
+function lsDel(id){ try { localStorage.removeItem(LSP + id); } catch (e) {} }
+function lsAll(){
+  const out = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++){
+      const k = localStorage.key(i);
+      if (k && k.startsWith(LSP)){ try { out.push(JSON.parse(localStorage.getItem(k))); } catch (e) {} }
+    }
+  } catch (e) {}
+  return out.filter(r => r && r.id);
+}
+
+function newer(a, b){
+  if (a && b) return (b.updated || 0) > (a.updated || 0) ? b : a;
+  return a || b;
+}
+async function loadRec(id){ return newer(await dbGet(id), lsGet(id)); }
+
+async function allSaved(){
+  const m = new Map();
+  for (const r of lsAll()) m.set(r.id, r);
+  for (const r of await dbAll()){
+    if (!r || !r.id) continue;
+    m.set(r.id, newer(m.get(r.id), r));
+  }
+  return [...m.values()]
+    .filter(r => !String(r.id).startsWith("__"))   // never list the storage probe
+    .sort((a,b) => (b.updated || 0) - (a.updated || 0));
+}
+
+function setSaveStatus(ok, detail){
+  if (!els.sstat) return;
+  if (ok){
+    const t = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    els.sstat.textContent = `saved ${t}${detail ? " · " + detail : ""}`;
+    els.sstat.classList.remove("warn");
+  } else {
+    els.sstat.textContent = "not saving — export .json now";
+    els.sstat.classList.add("warn");
+  }
+}
+
+async function saveNow(){
+  if (!study) return;
+  study.updated = Date.now();
+  // keep the heat array cheap so a whole library fits in the localStorage quota
+  for (let i = 0; i < study.heat.length; i++){
+    if (study.heat[i]) study.heat[i] = Math.round(study.heat[i] * 100) / 100;
+  }
+  const okLs = lsSave(study);                 // crash-safety mirror
+  const okDb = await dbPut(study);
+  const okMd = await writeMd();               // the file on disk, when one is bound
+  setSaveStatus(okLs || okDb || okMd,
+    okMd ? mdHandle.name : mdHandle ? "file write failed — browser storage only" : "no .md bound");
+  renderStudies();
+}
+let saveTimer = null;
+function save(){
+  if (!study) return;
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNow, 400);
+}
+
+/* ===================== markdown: the notes file on disk =====================
+   The .md is the source of truth for notes, prompts and settings. The heat band
+   is derived playback telemetry and stays in browser storage so the file remains
+   something you would actually want to read. */
+
+function toMd(st){
+  const head = [
+    "---",
+    `title: ${st.title}`,
+    `file: ${st.fileName}`,
+    `duration: ${(st.duration || 0).toFixed(2)}`,
+    `pass: ${st.pass}`,
+    `targetPasses: ${st.targetPasses}`,
+    `lag: ${st.lag}`,
+    `updated: ${new Date().toISOString()}`,
+    "prompts:"
+  ];
+  st.ladder.forEach((p, i) => head.push(`  ${i + 1}: ${p}`));
+  head.push("---", "");
+
+  const body = [`# ${st.title}`, ""];
+  const byPass = new Map();
+  for (const n of st.notes){
+    if (!byPass.has(n.pass)) byPass.set(n.pass, []);
+    byPass.get(n.pass).push(n);
+  }
+  for (const p of [...byPass.keys()].sort((a,b) => a - b)){
+    const prompt = st.ladder[p - 1];
+    body.push(`## Pass ${p}${prompt ? " — " + prompt : ""}`, "");
+    for (const n of byPass.get(p).sort((a,b) => a.t - b.t)){
+      body.push(`- ${n.star ? "\u2605 " : ""}**[${fmt(n.t, true)}]** ${n.text.split("\n").join("\n  ")}`);
+    }
+    body.push("");
+  }
+  return head.join("\n") + body.join("\n");
+}
+
+function parseMd(text, id, fileName){
+  const st = {
+    id, fileName: fileName || "", size: 0, title: (fileName || "study").replace(/\.notes\.md$/i, ""),
+    duration: 0, pass: 1, targetPasses: 10, lag: 1.5,
+    ladder: DEFAULT_LADDER.slice(), notes: [], heat: [], createdAt: Date.now()
+  };
+
+  let body = text;
+  const fm = text.match(/^---\n([\s\S]*?)\n---\n?/);
+  if (fm){
+    body = text.slice(fm[0].length);
+    const block = fm[1];
+    const get = (k) => {
+      const r = block.match(new RegExp("^" + k + ":[ \\t]*(.*)$", "m"));
+      return r ? r[1].trim() : null;
+    };
+    const num = (k, d) => { const v = parseFloat(get(k)); return isFinite(v) ? v : d; };
+    st.title        = get("title") || st.title;
+    st.fileName     = get("file") || st.fileName;
+    st.duration     = num("duration", 0);
+    st.pass         = Math.max(1, Math.round(num("pass", 1)));
+    st.targetPasses = Math.max(1, Math.round(num("targetPasses", 10)));
+    st.lag          = num("lag", 1.5);
+    const pr = block.match(/^prompts:\n((?:[ ]{2}\d+:.*\n?)+)/m);
+    if (pr){
+      const arr = [];
+      for (const line of pr[1].split("\n")){
+        const m = line.match(/^[ ]{2}(\d+):[ ]?(.*)$/);
+        if (m) arr[parseInt(m[1], 10) - 1] = m[2];
+      }
+      for (let i = 0; i < arr.length; i++) if (arr[i] === undefined) arr[i] = "";
+      if (arr.length) st.ladder = arr;
+    }
+  }
+
+  let pass = 1;
+  const lines = body.split("\n");
+  for (let i = 0; i < lines.length; i++){
+    const h = lines[i].match(/^##\s+Pass\s+(\d+)/i);
+    if (h){ pass = parseInt(h[1], 10); continue; }
+    const n = lines[i].match(/^-\s+(\u2605\s+)?\*\*\[(\d+):(\d+(?:\.\d+)?)\]\*\*\s?([\s\S]*)$/);
+    if (!n) continue;
+    let txt = n[4];
+    while (i + 1 < lines.length && /^[ ]{2}\S/.test(lines[i + 1])) txt += "\n" + lines[++i].slice(2);
+    txt = txt.trim();
+    if (!txt) continue;
+    st.notes.push({
+      id: Math.random().toString(36).slice(2, 10),
+      t: parseInt(n[2], 10) * 60 + parseFloat(n[3]),
+      text: txt, pass, star: !!n[1], tags: parseTags(txt), at: Date.now()
+    });
+  }
+  st.notes.sort((a,b) => a.t - b.t);
+  return st;
+}
+
+/* ---- the bound file handle ---- */
+let mdHandle = null;   // FileSystemFileHandle for this study's .md
+let mdReady = false;   // write permission actually granted
+
+async function handleStore(mode){
+  const d = await db(); if (!d) return null;
+  try { return d.transaction("handles", mode).objectStore("handles"); } catch (e) { return null; }
+}
+async function rememberHandle(id, h){
+  try {
+    const d = await db(); if (!d) return;
+    d.transaction("handles", "readwrite").objectStore("handles").put({ id, h });
+  } catch (e) {}
+}
+async function recallHandle(id){
+  try {
+    const d = await db(); if (!d) return null;
+    return await withTimeout(new Promise(res => {
+      const r = d.transaction("handles").objectStore("handles").get(id);
+      r.onsuccess = () => res(r.result ? r.result.h : null);
+      r.onerror = () => res(null);
+    }), 1500, null);
+  } catch (e) { return null; }
+}
+
+async function ensureWrite(h, ask){
+  try {
+    if ((await h.queryPermission({ mode: "readwrite" })) === "granted") return true;
+    if (!ask) return false;
+    return (await h.requestPermission({ mode: "readwrite" })) === "granted";
+  } catch (e) { return false; }
+}
+
+async function writeMd(){
+  if (!mdHandle || !study) return false;
+  try {
+    if (!mdReady) return false;
+    const w = await mdHandle.createWritable();
+    await w.write(toMd(study));
+    await w.close();
+    return true;
+  } catch (e) { return false; }
+}
+
+async function bindMd(){
+  if (!study) return;
+  if (!window.showSaveFilePicker){
+    els.sstat.textContent = "this browser can't write files — use Chrome";
+    els.sstat.classList.add("warn");
+    return;
+  }
+  try {
+    mdHandle = await window.showSaveFilePicker({
+      suggestedName: `${study.title}.notes.md`,
+      types: [{ description: "Markdown", accept: { "text/markdown": [".md"] } }]
+    });
+    mdReady = await ensureWrite(mdHandle, true);
+    const ok = await writeMd();
+    await rememberHandle(study.id, mdHandle);
+    syncBind();
+    setSaveStatus(ok, ok ? "" : "file write refused");
+  } catch (e) {
+    if (e && e.name === "AbortError") return;
+    mdHandle = null; mdReady = false;
+    syncBind();
+    els.sstat.textContent = "can't pick a file on file:// — run ./study";
+    els.sstat.classList.add("warn");
+  }
+}
+
+function syncBind(){
+  const b = els.bindMd;
+  if (!mdHandle){
+    b.textContent = "save to .md";
+    b.title = "Write this study to a .md file on disk";
+  } else if (!mdReady){
+    b.textContent = `reconnect ${mdHandle.name}`;
+    b.title = "Chrome drops write permission between sessions. One click restores it.";
+  } else {
+    b.textContent = `→ ${mdHandle.name}`;
+    b.title = `Every change is written to ${mdHandle.name}. Click to pick a different file.`;
+  }
+  b.classList.toggle("on", !!mdHandle && mdReady);
+}
+
+/* The .md on disk outranks browser storage whenever we can read it. */
+async function loadFromMd(){
+  if (!mdHandle || !study) return false;
+  try {
+    const txt = await (await mdHandle.getFile()).text();
+    if (!txt.trim()) return false;
+    const fromMd = parseMd(txt, study.id, mdHandle.name);
+    fromMd.heat = study.heat;          // playback telemetry stays local
+    fromMd.size = study.size;
+    fromMd.fileName = study.fileName || fromMd.fileName;
+    fromMd.createdAt = study.createdAt;
+    study = fromMd;
+    const entry = library.get(study.id);
+    if (entry) entry.study = study;
+    renderNotes(); syncLadder(); syncLcd();
+    return true;
+  } catch (e) { return false; }
+}
+
+async function onBindClick(){
+  if (mdHandle && !mdReady){
+    if (await ensureWrite(mdHandle, true)){
+      mdReady = true;
+      await loadFromMd();
+      syncBind();
+      saveNow();
+    } else {
+      syncBind();
+    }
+    return;
+  }
+  await bindMd();
+}
+
+/* ===================== files ===================== */
+function fingerprint(file){ return `${file.name}::${file.size}`; }
+
+async function addFiles(fileList, mdHandles){
+  const files = [...fileList];
+  const audioFiles = files.filter(f => !/\.(json|md)$/i.test(f.name));
+  const jsonFiles  = files.filter(f => /\.json$/i.test(f.name));
+  const mdFiles    = files.filter(f => /\.md$/i.test(f.name));
+
+  for (const f of jsonFiles) await importJson(f);
+
+  for (const f of mdFiles){
+    if (!study){
+      alert("Open the MP3 first, then drop its .md — the notes attach to the track.");
+      break;
+    }
+    try {
+      const fromMd = parseMd(await f.text(), study.id, f.name);
+      fromMd.heat = study.heat;
+      fromMd.size = study.size;
+      fromMd.fileName = study.fileName || fromMd.fileName;
+      fromMd.createdAt = study.createdAt;
+      study = fromMd;
+      const entry = library.get(study.id);
+      if (entry) entry.study = study;
+      const h = (mdHandles || []).find(x => x.name === f.name);
+      if (h){ mdHandle = h; mdReady = await ensureWrite(h, false); await rememberHandle(study.id, h); }
+      syncBind(); renderNotes(); syncLadder(); syncLcd(); save();
+    } catch (e) {
+      alert(`Couldn't read ${f.name} as a study.`);
+    }
+  }
+
+  // reattaching a saved study to its audio file (filename or size changed)
+  if (attachTo && audioFiles.length){
+    const oldId = attachTo; attachTo = null;
+    const rec = await loadRec(oldId);
+    const f = audioFiles[0];
+    if (rec && confirm(`Reopen "${rec.title}" (${rec.notes.length} notes) with ${f.name}?`)){
+      const nid = fingerprint(f);
+      lsDel(oldId); await dbDel(oldId);
+      rec.id = nid; rec.fileName = f.name; rec.updated = Date.now();
+      lsSave(rec); await dbPut(rec);
+      library.set(nid, { file: f, url: URL.createObjectURL(f), study: rec, peaks: null });
+      await renderStudies();
+      await open(nid);
+      return;
+    }
+  }
+
+  let first = null;
+  for (const f of audioFiles){
+    const id = fingerprint(f);
+    if (!library.has(id)){
+      library.set(id, { file: f, url: URL.createObjectURL(f), study: null, peaks: null });
+    } else {
+      library.get(id).file = f;
+    }
+    if (!first) first = id;
+  }
+  renderFiles();
+  if (first) await open(first);
+}
+
+async function importJson(file){
+  try {
+    const rec = JSON.parse(await file.text());
+    if (rec && rec.id && Array.isArray(rec.notes)){
+      const existing = await loadRec(rec.id);
+      if (existing){
+        const seen = new Set(existing.notes.map(n => n.id));
+        rec.notes.forEach(n => { if (!seen.has(n.id)) existing.notes.push(n); });
+        existing.notes.sort((a,b) => a.t - b.t);
+        existing.updated = Date.now();
+        lsSave(existing); await dbPut(existing);
+      } else {
+        rec.updated = rec.updated || Date.now();
+        lsSave(rec); await dbPut(rec);
+      }
+    }
+  } catch (e) {
+    alert(`Couldn't read ${file.name} — it isn't a Song Study export.`);
+  }
+}
+
+function freshStudy(id, file){
+  return {
+    id, fileName: file.name, size: file.size,
+    title: file.name.replace(/\.[^.]+$/, ""),
+    duration: 0, pass: 1, targetPasses: 10,
+    lag: 1.5, ladder: DEFAULT_LADDER.slice(),
+    notes: [], heat: [], createdAt: Date.now()
+  };
+}
+
+async function open(id){
+  const entry = library.get(id);
+  if (!entry) return;
+
+  audio.pause();
+  study = (await loadRec(id)) || entry.study || freshStudy(id, entry.file);
+  study.fileName = entry.file.name;
+  if (!Array.isArray(study.heat)) study.heat = [];
+  if (!Array.isArray(study.ladder) || !study.ladder.length) study.ladder = DEFAULT_LADDER.slice();
+  entry.study = study;
+
+  audio.src = entry.url;
+  loopA = loopB = null; selected = null; pending = null; counted = false;
+  mdHandle = null; mdReady = false;
+  lastDeleted = null; syncUndo(); closeInline(false);
+  els.entry.value = "";
+  els.ghost.classList.add("hidden");
+  els.rTrack.textContent = study.title;
+
+  peaks = entry.peaks;
+  if (!peaks){
+    els.heatLbl.textContent = "· reading the file…";
+    peaks = await computePeaks(entry.file);
+    entry.peaks = peaks;
+    els.heatLbl.textContent = "· pins stack by pass · band below = time spent";
+  }
+
+  [ "play","back","fwd","top","setA","setB","clrLoop","expMd","expJson","commit","bindMd" ]
+    .forEach(k => els[k].disabled = false);
+
+  mdHandle = await recallHandle(id);
+  mdReady = mdHandle ? await ensureWrite(mdHandle, false) : false;
+  if (mdReady) await loadFromMd();
+  syncBind();
+
+  heatDirty = true;
+  renderStudies(); renderNotes(); layoutCanvas(); paintStatic(); syncLadder(); syncLcd();
+  els.entry.focus();
+  save();
+}
+
+/* ---- decode to peaks (one pass, cached per file) ---- */
+async function computePeaks(file){
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const ac = new AC();
+    const buf = await ac.decodeAudioData(await file.arrayBuffer());
+    await ac.close();
+
+    const N = 1400;
+    const chans = [];
+    for (let c = 0; c < buf.numberOfChannels; c++) chans.push(buf.getChannelData(c));
+    const len = buf.length;
+    const step = len / N;
+    const mn = new Float32Array(N), mx = new Float32Array(N);
+
+    for (let i = 0; i < N; i++){
+      const s = Math.floor(i * step), e = Math.min(len, Math.floor((i + 1) * step));
+      let lo = 0, hi = 0;
+      for (let j = s; j < e; j++){
+        let v = 0;
+        for (let c = 0; c < chans.length; c++) v += chans[c][j];
+        v /= chans.length;
+        if (v < lo) lo = v;
+        if (v > hi) hi = v;
+      }
+      mn[i] = lo; mx[i] = hi;
+    }
+    return { min: mn, max: mx, n: N };
+  } catch (e) {
+    return null; // unreadable codec — everything else still works
+  }
+}
+
+let attachTo = null;   // a saved study waiting for its audio file
+
+async function renderStudies(){
+  const saved = await allSaved();
+  els.files.innerHTML = "";
+
+  for (const [id, entry] of library){
+    const rec = (study && study.id === id) ? study : saved.find(r => r.id === id);
+    const b = document.createElement("button");
+    b.className = "fchip" + (study && study.id === id ? " on" : "");
+    b.innerHTML = `<span class="dot"></span><b></b><span class="n"></span>`;
+    b.querySelector("b").textContent = entry.file.name.replace(/\.[^.]+$/, "");
+    b.querySelector(".n").textContent = rec && rec.notes.length ? rec.notes.length : "";
+    b.addEventListener("click", () => { attachTo = null; open(id); });
+    els.files.appendChild(b);
+  }
+
+  for (const rec of saved){
+    if (library.has(rec.id)) continue;
+    if (!rec.notes || !rec.notes.length) continue;  // nothing to reattach to
+    const b = document.createElement("button");
+    b.className = "fchip ghost";
+    b.innerHTML = `<span class="dot"></span><b></b><span class="n"></span>`;
+    b.querySelector("b").textContent = rec.title;
+    b.querySelector(".n").textContent = `${rec.notes.length} · needs file`;
+    b.title = `${rec.notes.length} notes saved. Click to reattach the audio file.`;
+    b.addEventListener("click", () => { attachTo = rec.id; els.file.click(); });
+    els.files.appendChild(b);
+  }
+}
+const renderFiles = renderStudies;
+
+/* ===================== canvas ===================== */
+function layoutCanvas(){
+  const dpr = window.devicePixelRatio || 1;
+  const w = els.wave.clientWidth || 800;
+  const h = els.wave.clientHeight || 132;
+  els.wave.width = Math.round(w * dpr);
+  els.wave.height = Math.round(h * dpr);
+  layer.width = els.wave.width;
+  layer.height = els.wave.height;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  heatDirty = true;
+}
+
+function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+function paintStatic(){
+  const w = els.wave.clientWidth, h = els.wave.clientHeight;
+  const heatH = 16, waveH = h - heatH;
+  const mid = waveH / 2;
+  lctx.clearRect(0, 0, w, h);
+
+  // heat band — seconds actually listened to
+  if (study && study.heat && study.heat.length){
+    const max = Math.max(...study.heat, 1);
+    const dur = study.duration || audio.duration || 1;
+    for (let s = 0; s < study.heat.length; s++){
+      const v = (study.heat[s] || 0) / max;
+      if (v <= 0) continue;
+      const x = (s / dur) * w, bw = Math.max(1, (1 / dur) * w);
+      lctx.fillStyle = css("--accent");
+      lctx.globalAlpha = 0.10 + v * 0.72;
+      lctx.fillRect(x, waveH + 3, bw, heatH - 5);
+    }
+    lctx.globalAlpha = 1;
+  }
+  lctx.fillStyle = css("--edge-soft");
+  lctx.fillRect(0, waveH, w, 1);
+
+  // 30-second grid with labels — the only ornament on the scope is a scale
+  const gdur = study ? (study.duration || audio.duration || 0) : 0;
+  if (gdur){
+    const stepS = gdur > 420 ? 60 : 30;
+    lctx.font = '9px "IBM Plex Mono", ui-monospace, monospace';
+    lctx.textBaseline = "top";
+    for (let t = stepS; t < gdur; t += stepS){
+      const x = Math.round((t / gdur) * w) + 0.5;
+      lctx.fillStyle = css("--edge-soft");
+      lctx.fillRect(x, 0, 1, waveH);
+      lctx.fillStyle = css("--ink-3");
+      lctx.fillText(fmt(t), x + 4, 4);
+    }
+  }
+
+  // waveform
+  if (peaks){
+    lctx.fillStyle = css("--ink-2");
+    lctx.globalAlpha = 0.55;
+    const n = peaks.n;
+    for (let i = 0; i < n; i++){
+      const x = (i / n) * w;
+      const bw = Math.max(0.6, w / n - 0.35);
+      const top = mid - peaks.max[i] * mid * 0.94;
+      const bot = mid - peaks.min[i] * mid * 0.94;
+      lctx.fillRect(x, top, bw, Math.max(1, bot - top));
+    }
+    lctx.globalAlpha = 1;
+  } else {
+    lctx.fillStyle = css("--ink-3");
+    lctx.globalAlpha = .4;
+    lctx.fillRect(0, mid - 0.5, w, 1);
+    lctx.globalAlpha = 1;
+  }
+  lastHeatPaint = performance.now();
+  heatDirty = false;
+}
+
+function paint(){
+  const w = els.wave.clientWidth, h = els.wave.clientHeight;
+  const dpr = window.devicePixelRatio || 1;
+  ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(layer, 0, 0, layer.width / dpr, layer.height / dpr);
+
+  const dur = study ? (study.duration || audio.duration || 0) : 0;
+  if (!dur) return;
+
+  // loop region
+  if (loopA !== null){
+    const x1 = (loopA / dur) * w;
+    const x2 = loopB !== null ? (loopB / dur) * w : x1 + 1;
+    ctx.fillStyle = css("--blue");
+    ctx.globalAlpha = .13;
+    ctx.fillRect(x1, 0, Math.max(1, x2 - x1), h - 16);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = css("--blue");
+    ctx.fillRect(x1, 0, 1.5, h - 16);
+    if (loopB !== null) ctx.fillRect(x2 - 1.5, 0, 1.5, h - 16);
+  }
+
+  // playhead
+  const x = (audio.currentTime / dur) * w;
+  ctx.fillStyle = css("--accent");
+  ctx.fillRect(x - 1, 0, 2, h - 16);
+  ctx.beginPath();
+  ctx.arc(x, 0, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/* ===================== pins ===================== */
+function renderPins(){
+  els.pins.innerHTML = "";
+  if (!study) return;
+  const dur = study.duration || audio.duration || 0;
+  if (!dur) return;
+  const lane = els.pins.clientHeight - 14;
+  const span = Math.max(1, study.targetPasses - 1);
+
+  for (const n of visibleNotes()){
+    const b = document.createElement("button");
+    b.className = "pin" + (selected === n.id ? " sel" : "") + (n.star ? " flag" : "");
+    const c = passColor(n.pass);
+    b.style.background = c;
+    b.style.color = c;
+    b.style.left = (n.t / dur) * 100 + "%";
+    b.style.top = (clamp(n.pass - 1, 0, span) / span) * lane + 3 + "px";
+    b.title = `${n.star ? "\u2605 " : ""}pass ${n.pass} · ${fmt(n.t, true)} — ${n.text}`;
+    b.setAttribute("aria-label", b.title);
+    b.addEventListener("click", (e) => { e.stopPropagation(); selectNote(n.id, true); });
+    els.pins.appendChild(b);
+  }
+}
+
+/* ===================== notes ===================== */
+function visibleNotes(){
+  if (!study) return [];
+  return study.notes.filter(n => (!filterPass || n.pass === filterPass) && (!starOnly || n.star));
+}
+
+let inlineEditing = null;   // note id whose text is open for editing
+let finishInline = null;   // closure that ends the open edit
+
+/* Ends any open inline edit. keep=true commits the text.
+   silent=true skips the re-render, for callers that are about to render anyway. */
+function closeInline(keep, silent){
+  if (finishInline) finishInline(keep, silent);
+}
+
+function beginInline(n, li){
+  const x = li && li.querySelector(".x");
+  if (!x || inlineEditing) return;
+
+  inlineEditing = n.id;
+  x.textContent = n.text;                       // strip the tag markup while editing
+  x.contentEditable = "plaintext-only";
+  if (x.contentEditable !== "plaintext-only") x.contentEditable = "true";
+  x.classList.add("editing");
+  try { x.focus({ preventScroll: true }); } catch (e) { x.focus(); }
+  try {
+    const r = document.createRange();
+    r.selectNodeContents(x); r.collapse(false);
+    const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  } catch (e) {}
+
+  finishInline = (keep, silent) => {
+    if (inlineEditing !== n.id) return;
+    inlineEditing = null; finishInline = null;
+    x.contentEditable = "false";
+    x.classList.remove("editing");
+    if (keep){
+      const t = x.textContent.replace(/\s+$/, "").trim();
+      if (t && t !== n.text){ n.text = t; n.tags = parseTags(t); save(); }
+    }
+    if (!silent){
+      renderNotes();
+      if (!els.entry.disabled) els.entry.focus();   // hands ←→ back to time-nudge
+    }
+  };
+
+  x.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); finishInline(true); }
+    else if (e.key === "Escape"){ e.preventDefault(); finishInline(false); }
+  });
+  x.addEventListener("blur", () => { if (finishInline) finishInline(true); });
+}
+
+function toggleStar(id){
+  const n = study.notes.find(x => x.id === id);
+  if (!n) return;
+  n.star = !n.star;
+  renderNotes(); save();
+}
+
+function noteRow(n){
+  const li = document.createElement("li");
+  li.className = "note" + (selected === n.id ? " sel" : "");
+  li.tabIndex = 0;
+  const body = escapeHtml(n.text).replace(/#([\p{L}\p{N}_-]+)/gu, '<span class="tag">#$1</span>');
+  li.innerHTML =
+    `<button class="star${n.star ? " on" : ""}" title="Flag this note" aria-pressed="${!!n.star}">${n.star ? "\u2605" : "\u2606"}</button>` +
+    `<span class="t">${fmt(n.t, true)}</span>` +
+    `<span class="pnum" style="color:${passColor(n.pass)}">p${n.pass}</span>` +
+    `<span class="x">${body}</span>` +
+    `<button class="del" title="Delete this note" aria-label="Delete note">\u00d7</button>`;
+  li.querySelector(".star").addEventListener("click", (e) => { e.stopPropagation(); toggleStar(n.id); });
+  li.querySelector(".del").addEventListener("click", (e) => { e.stopPropagation(); removeNote(n.id); });
+  li.addEventListener("click", () => { if (inlineEditing !== n.id) selectNote(n.id, true, true); });
+  li.addEventListener("keydown", (e) => {
+    if (e.key === "Enter"){ e.preventDefault(); selectNote(n.id, true, true); }
+    if (e.key === "s" || e.key === "S"){ e.preventDefault(); toggleStar(n.id); }
+    if (e.key === "Backspace" || e.key === "Delete"){ e.preventDefault(); removeNote(n.id); }
+  });
+  return li;
+}
+
+function renderNotes(){
+  closeInline(true, true);        // commit any open edit before the list is rebuilt
+  const list = els.notes;
+  list.innerHTML = "";
+  if (!study || !study.notes.length){
+    const li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = study
+      ? "Nothing logged yet on this track. Hit play and start typing whenever something catches you."
+      : "Nothing logged yet. Open an MP3, hit play, and type whenever something catches you — the stamp is set on your first keystroke, then pulled back by the lag offset.";
+    list.appendChild(li);
+    els.count.textContent = "0 notes";
+    renderPins();
+    return;
+  }
+
+  const shown = visibleNotes();
+  list.classList.toggle("by-pass", sortMode === "pass");
+
+  if (!shown.length){
+    const li = document.createElement("li");
+    li.className = "empty";
+    li.textContent = starOnly
+      ? "No flagged notes yet. Click the ☆ on any note to flag it."
+      : `Nothing logged on pass ${filterPass} yet.`;
+    list.appendChild(li);
+  } else if (sortMode === "time"){
+    for (const n of [...shown].sort((a,b) => a.t - b.t || a.pass - b.pass)){
+      list.appendChild(noteRow(n));
+    }
+  } else {
+    const byPass = new Map();
+    for (const n of shown){
+      if (!byPass.has(n.pass)) byPass.set(n.pass, []);
+      byPass.get(n.pass).push(n);
+    }
+    for (const p of [...byPass.keys()].sort((a,b) => a - b)){
+      const head = document.createElement("li");
+      head.className = "passhead";
+      head.innerHTML = `<span class="lbl" style="color:${passColor(p)}">Pass ${String(p).padStart(2,"0")}</span><span class="bar"></span><span class="lbl">${byPass.get(p).length}</span>`;
+      list.appendChild(head);
+      for (const n of byPass.get(p).sort((a,b) => a.t - b.t)) list.appendChild(noteRow(n));
+    }
+  }
+
+  const starred = study.notes.filter(n => n.star).length;
+  const total = study.notes.length;
+  els.count.textContent = shown.length === total
+    ? `${total} note${total === 1 ? "" : "s"}${starred ? ` · ${starred} flagged` : ""}`
+    : `${shown.length} of ${total}`;
+  renderPins();
+}
+
+function selectNote(id, seek, edit){
+  selected = id;
+  const n = study.notes.find(x => x.id === id);
+  if (n && seek) jump(Math.max(0, n.t - PREROLL));
+  renderNotes();
+  const el = els.notes.querySelector(".note.sel");
+  if (el) el.scrollIntoView({ block: "nearest" });
+  if (n && edit && el) beginInline(n, el);
+  else if (!els.entry.disabled) els.entry.focus();   // keeps space and ←→ live
+}
+
+let lastDeleted = null;
+
+function removeNote(id){
+  const i = study.notes.findIndex(n => n.id === id);
+  if (i < 0) return;
+  lastDeleted = study.notes[i];
+  study.notes.splice(i, 1);
+  if (selected === id) selected = null;
+  if (inlineEditing === id) closeInline(false);
+  renderNotes(); save(); syncUndo();
+}
+
+function undoDelete(){
+  if (!lastDeleted || !study) return;
+  study.notes.push(lastDeleted);
+  study.notes.sort((a,b) => a.t - b.t);
+  selected = lastDeleted.id;
+  lastDeleted = null;
+  renderNotes(); save(); syncUndo();
+}
+
+function syncUndo(){ els.undo.hidden = !lastDeleted; }
+
+const HINT_DEFAULT = "enter to log · shift+enter for a new line";
+
+function commitNote(){
+  const text = els.entry.value.trim();
+  if (!text || !study) return;
+  const dur = study.duration || audio.duration || 0;
+  const t = clamp(pending !== null ? pending : audio.currentTime - study.lag, 0, dur);
+  study.notes.push({
+    id: Math.random().toString(36).slice(2, 10),
+    t, text, pass: study.pass, tags: parseTags(text), at: Date.now()
+  });
+  study.notes.sort((a,b) => a.t - b.t);
+  els.entry.value = "";
+  pending = null;
+  els.stamp.classList.remove("live");
+  els.armed.classList.remove("live");
+  renderNotes(); save();
+  els.entry.focus();
+}
+
+/* ===================== transport ===================== */
+function jump(t){
+  const dur = study ? (study.duration || audio.duration || 0) : 0;
+  audio.currentTime = clamp(t, 0, Math.max(0, dur - 0.05));
+  counted = false;
+}
+function toggle(){
+  if (audio.paused) audio.play().catch(() => {});
+  else audio.pause();
+  syncTransport();
+}
+function syncTransport(){
+  els.play.textContent = audio.paused ? "▶" : "❚❚";
+  els.play.classList.toggle("on", !audio.paused);
+}
+function setRate(r){
+  audio.playbackRate = r;
+  audio.preservesPitch = true;
+  audio.mozPreservesPitch = true;
+  audio.webkitPreservesPitch = true;
+  els.slow.classList.toggle("on", r === 0.75);
+  els.half.classList.toggle("on", r === 0.5);
+  syncLcd();
+}
+
+function syncLadder(){
+  if (!study) return;
+  const i = clamp(study.pass, 1, study.ladder.length) - 1;
+  els.pn.textContent = String(study.pass).padStart(2, "0");
+  els.ladder.value = study.ladder[i] || "";
+  const silent = study.pass === 1 && /no notes/i.test(study.ladder[0] || "");
+  els.entry.placeholder = silent
+    ? "Pass 1 is a listening pass — but the box still works if you need it."
+    : "Start typing the moment you hear it — the timestamp is taken at your first keystroke.";
+}
+
+function syncLcd(){
+  const dur = study ? (study.duration || audio.duration || 0) : 0;
+  els.rPos.textContent = study ? fmt(audio.currentTime, true) : "–:––.–";
+  els.rRem.textContent = dur ? "-" + fmt(Math.max(0, dur - audio.currentTime)) : "–:––";
+  els.rPass.textContent = study ? `${study.pass}/${study.targetPasses}` : "–/––";
+  els.rRate.textContent = audio.playbackRate.toFixed(2) + "×";
+  els.rLag.textContent = (study ? study.lag : 1.5).toFixed(1) + "s";
+}
+
+/* ===================== frame loop ===================== */
+function frame(now){
+  requestAnimationFrame(frame);
+  const dt = lastFrame ? (now - lastFrame) / 1000 : 0;
+  lastFrame = now;
+  if (!study) return;
+
+  const dur = study.duration || audio.duration || 0;
+  const cur = audio.currentTime;
+
+  if (!audio.paused && dt > 0 && dt < 0.5){
+    const s = Math.floor(cur);
+    study.heat[s] = (study.heat[s] || 0) + dt;
+    if (now - lastHeatPaint > 900) heatDirty = true;
+  }
+
+  // loop
+  if (loopA !== null && loopB !== null && loopB > loopA){
+    if (cur > loopB || cur < loopA - 0.3) audio.currentTime = loopA;
+  } else if (dur){
+    // pass counting (paused while looping)
+    if (cur < 1) counted = false;
+    if (!counted && cur >= dur - 0.35){
+      counted = true;
+      study.pass = Math.min(study.pass + 1, 99);
+      syncLadder(); save();
+      if (els.repeat.getAttribute("aria-pressed") === "true"){
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+      }
+    }
+  }
+
+  if (heatDirty) paintStatic();
+  paint();
+  syncLcd();
+}
+requestAnimationFrame(frame);
+
+/* ===================== export ===================== */
+function download(name, text, mime){
+  const blob = new Blob([text], { type: mime });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function toMarkdown(){
+  const dur = study.duration || 0;
+  const lines = [
+    `# ${study.title}`,
+    ``,
+    `\`${study.fileName}\` · ${fmt(dur)} · ${study.pass - 1} pass${study.pass - 1 === 1 ? "" : "es"} completed · ${study.notes.length} notes`,
+    ``
+  ];
+  const byPass = new Map();
+  for (const n of study.notes){
+    if (!byPass.has(n.pass)) byPass.set(n.pass, []);
+    byPass.get(n.pass).push(n);
+  }
+  for (const p of [...byPass.keys()].sort((a,b) => a - b)){
+    lines.push(`## Pass ${p} — ${study.ladder[p - 1] || ""}`.trimEnd(), ``);
+    for (const n of byPass.get(p).sort((a,b) => a.t - b.t)){
+      lines.push(`- ${n.star ? "\u2605 " : ""}**[${fmt(n.t, true)}]** ${n.text}`);
+    }
+    lines.push(``);
+  }
+  return lines.join("\n");
+}
+
+/* ===================== events ===================== */
+els.load.addEventListener("click", () => els.file.click());
+els.file.addEventListener("change", (e) => { addFiles(e.target.files); els.file.value = ""; });
+
+document.addEventListener("dragover", (e) => { e.preventDefault(); document.body.classList.add("drag"); });
+document.addEventListener("dragleave", (e) => { if (e.relatedTarget === null) document.body.classList.remove("drag"); });
+document.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  document.body.classList.remove("drag");
+  const dt = e.dataTransfer;
+  if (!dt || !dt.files.length) return;
+  // a dropped .md can hand us a writable handle, so binding needs no second dialog
+  const handles = [];
+  if (dt.items){
+    for (const item of [...dt.items]){
+      if (item.kind !== "file" || !item.getAsFileSystemHandle) continue;
+      try {
+        const h = await item.getAsFileSystemHandle();
+        if (h && h.kind === "file" && /\.md$/i.test(h.name)) handles.push(h);
+      } catch (err) {}
+    }
+  }
+  addFiles(dt.files, handles);
+});
+
+audio.addEventListener("loadedmetadata", () => {
+  if (!study) return;
+  study.duration = audio.duration;
+  heatDirty = true;
+  renderPins(); syncLcd(); save();
+});
+audio.addEventListener("play", syncTransport);
+audio.addEventListener("pause", syncTransport);
+audio.addEventListener("ended", () => { syncTransport(); });
+
+els.play.addEventListener("click", () => { toggle(); els.entry.focus(); });
+els.back.addEventListener("click", () => { jump(audio.currentTime - 5); els.entry.focus(); });
+els.fwd .addEventListener("click", () => { jump(audio.currentTime + 5); els.entry.focus(); });
+els.top .addEventListener("click", () => { jump(0); els.entry.focus(); });
+els.repeat.addEventListener("click", () => {
+  const on = els.repeat.getAttribute("aria-pressed") === "true";
+  els.repeat.setAttribute("aria-pressed", String(!on));
+});
+els.slow.addEventListener("click", () => setRate(audio.playbackRate === 0.75 ? 1 : 0.75));
+els.half.addEventListener("click", () => setRate(audio.playbackRate === 0.5 ? 1 : 0.5));
+
+els.setA.addEventListener("click", () => { loopA = audio.currentTime; if (loopB !== null && loopB <= loopA) loopB = null; });
+els.setB.addEventListener("click", () => { loopB = audio.currentTime; if (loopA === null) loopA = 0; });
+els.clrLoop.addEventListener("click", () => { loopA = loopB = null; });
+
+els.lagUp.addEventListener("click", () => { if (study){ study.lag = clamp(study.lag + 0.25, 0, 6); syncLcd(); save(); } });
+els.lagDn.addEventListener("click", () => { if (study){ study.lag = clamp(study.lag - 0.25, 0, 6); syncLcd(); save(); } });
+els.passUp.addEventListener("click", () => { if (study){ study.targetPasses = clamp(study.targetPasses + 1, 1, 40); renderPins(); syncLcd(); save(); } });
+els.passDn.addEventListener("click", () => { if (study){ study.targetPasses = clamp(study.targetPasses - 1, 1, 40); renderPins(); syncLcd(); save(); } });
+
+els.bindMd.addEventListener("click", onBindClick);
+els.undo.addEventListener("click", undoDelete);
+
+els.starBtn.addEventListener("click", () => {
+  starOnly = !starOnly;
+  els.starBtn.textContent = starOnly ? "\u2605 flagged" : "\u2606 flagged";
+  els.starBtn.classList.toggle("on", starOnly);
+  renderNotes();
+});
+
+function setSort(mode){
+  sortMode = mode;
+  els.sortPass.setAttribute("aria-pressed", String(mode === "pass"));
+  els.sortTime.setAttribute("aria-pressed", String(mode === "time"));
+  renderNotes();
+}
+els.sortPass.addEventListener("click", () => setSort("pass"));
+els.sortTime.addEventListener("click", () => setSort("time"));
+
+els.filter.addEventListener("click", () => {
+  if (!study) return;
+  const passes = [...new Set(study.notes.map(n => n.pass))].sort((a,b) => a - b);
+  if (!passes.length) return;
+  const i = passes.indexOf(filterPass);
+  filterPass = i === passes.length - 1 ? 0 : passes[i + 1];
+  els.filter.textContent = filterPass ? `Pass ${filterPass}` : "All passes";
+  els.filter.classList.toggle("on", !!filterPass);
+  renderNotes();
+});
+
+els.ladder.addEventListener("input", () => {
+  if (!study) return;
+  const i = clamp(study.pass, 1, 40) - 1;
+  while (study.ladder.length <= i) study.ladder.push("");
+  study.ladder[i] = els.ladder.value;
+  save();
+});
+
+els.commit.addEventListener("click", commitNote);
+els.expMd.addEventListener("click", () => download(`${study.title}.notes.md`, toMarkdown(), "text/markdown"));
+els.expJson.addEventListener("click", () => download(`${study.title}.notes.json`, JSON.stringify(study, null, 2), "application/json"));
+
+/* --- the anchor: stamped on the first keystroke --- */
+els.entry.addEventListener("beforeinput", () => {
+  if (!study) return;
+  if (pending === null && els.entry.value.trim() === ""){
+    pending = clamp(audio.currentTime - study.lag, 0, study.duration || audio.duration || 0);
+    els.stamp.textContent = fmt(pending, true);
+    els.stamp.classList.add("live");
+    els.armed.classList.add("live");
+  }
+});
+els.entry.addEventListener("input", () => {
+  if (els.entry.value === ""){
+    pending = null;
+    els.stamp.classList.remove("live");
+    els.armed.classList.remove("live");
+    els.hint.textContent = HINT_DEFAULT;
+  }
+});
+
+els.entry.addEventListener("keydown", (e) => {
+  const empty = els.entry.value === "";
+
+  if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); commitNote(); return; }
+  if (e.key === "Escape"){
+    e.preventDefault();
+    els.entry.value = ""; pending = null; selected = null;
+    els.stamp.classList.remove("live"); els.armed.classList.remove("live");
+    els.hint.textContent = HINT_DEFAULT;
+    renderNotes();
+    return;
+  }
+
+  // nudge the pending stamp while typing
+  if (e.altKey && (e.key === "ArrowLeft" || e.key === "ArrowRight") && pending !== null){
+    e.preventDefault();
+    pending = clamp(pending + (e.key === "ArrowRight" ? 0.25 : -0.25), 0, study.duration || 0);
+    els.stamp.textContent = fmt(pending, true);
+    return;
+  }
+
+  if (!empty || !study) return;
+
+  if (e.key === "ArrowLeft" || e.key === "ArrowRight"){
+    e.preventDefault();
+    const dir = e.key === "ArrowRight" ? 1 : -1;
+    if (selected){
+      const n = study.notes.find(x => x.id === selected);
+      if (n){
+        n.t = clamp(n.t + dir * (e.shiftKey ? 1 : 0.25), 0, study.duration || 0);
+        study.notes.sort((a,b) => a.t - b.t);
+        jump(Math.max(0, n.t - 0.4));
+        if (audio.paused) audio.play().catch(() => {});
+        renderNotes(); save();
+        return;
+      }
+    }
+    jump(audio.currentTime + dir * 5);
+  }
+});
+
+/* --- undo the last delete (the textarea keeps its own native undo) --- */
+document.addEventListener("keydown", (e) => {
+  if ((e.metaKey || e.ctrlKey) && (e.key === "z" || e.key === "Z") && !e.shiftKey){
+    if (e.target === els.entry && els.entry.value !== "") return;
+    if (e.target.isContentEditable) return;   // let an inline edit keep native undo
+    if (!lastDeleted) return;
+    e.preventDefault();
+    undoDelete();
+  }
+});
+
+/* --- space plays/pauses unless you are actually typing --- */
+document.addEventListener("keydown", (e) => {
+  if (e.key !== " " && e.code !== "Space") return;
+  const t = e.target;
+  if (t === els.entry && els.entry.value !== "") return;          // mid-note
+  if (t !== els.entry && (t.isContentEditable ||
+      t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;  // ladder prompt, etc.
+  if (!study) return;
+  e.preventDefault();
+  toggle();
+});
+
+/* --- scrub --- */
+function scrubTo(e){
+  const dur = study ? (study.duration || audio.duration || 0) : 0;
+  if (!dur) return;
+  const r = els.scrub.getBoundingClientRect();
+  jump(((e.clientX - r.left) / r.width) * dur);
+}
+els.scrub.addEventListener("pointerdown", (e) => {
+  els.scrub.setPointerCapture(e.pointerId);
+  scrubTo(e);
+  const move = (ev) => scrubTo(ev);
+  const up = () => { els.scrub.removeEventListener("pointermove", move); els.scrub.removeEventListener("pointerup", up); els.entry.focus(); };
+  els.scrub.addEventListener("pointermove", move);
+  els.scrub.addEventListener("pointerup", up);
+});
+
+/* --- theme --- */
+els.theme.addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const next = cur === "dark" ? "light" : cur === "light" ? "dark" : (matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark");
+  document.documentElement.setAttribute("data-theme", next);
+  try { localStorage.setItem("songstudy.theme", next); } catch (e) {}
+  heatDirty = true;
+});
+try {
+  const t = localStorage.getItem("songstudy.theme");
+  if (t) document.documentElement.setAttribute("data-theme", t);
+} catch (e) {}
+
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { heatDirty = true; });
+new ResizeObserver(() => { layoutCanvas(); paintStatic(); renderPins(); }).observe(els.wave);
+
+window.addEventListener("beforeunload", () => {
+  if (!study) return;
+  study.updated = Date.now();
+  lsSave(study);          // synchronous — completes even as the page tears down
+  dbPut(study);
+});
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden" && study){ study.updated = Date.now(); lsSave(study); }
+});
+
+layoutCanvas(); paintStatic(); syncLcd(); syncTransport();
+renderStudies();
+
+// prove storage works on this machine before any notes depend on it
+(async () => {
+  const probe = { id: "__probe__", notes: [], updated: Date.now() };
+  const okLs = lsSave(probe);
+  const okDb = await dbPut(probe);
+  lsDel("__probe__"); await dbDel("__probe__");
+  if (!okLs && !okDb){
+    els.sstat.textContent = "storage blocked — export .json after every pass";
+    els.sstat.classList.add("warn");
+  } else {
+    els.sstat.textContent = okLs && okDb ? "storage ok" : okLs ? "storage ok · local only" : "storage ok · db only";
+  }
+  renderStudies();
+})();
+</script>
+</body>
+</html>
