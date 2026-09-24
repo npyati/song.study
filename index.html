@@ -278,7 +278,7 @@ button{font:inherit;color:inherit}
 .fchip b{font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fchip .dot{background:var(--line-2)}
 .fchip.on{border-color:var(--ink-3);color:var(--ink)}
-.fchip.ghost{border-style:dashed;color:var(--ink-3)}
+.fchip.unbound{border-style:dashed;color:var(--ink-3)}
 .fchip .n{color:var(--ink-3);font-size:9.5px}
 #sstat{white-space:nowrap}
 #sstat.warn{color:var(--accent)}
@@ -1048,7 +1048,7 @@ async function renderStudies(){
     if (library.has(rec.id)) continue;
     if (!rec.notes || !rec.notes.length) continue;  // nothing to reattach to
     const b = document.createElement("button");
-    b.className = "fchip ghost";
+    b.className = "fchip unbound";
     b.innerHTML = `<span class="dot"></span><b></b><span class="n"></span>`;
     b.querySelector("b").textContent = rec.title;
     b.querySelector(".n").textContent = `${rec.notes.length} · needs file`;
@@ -1504,23 +1504,30 @@ els.file.addEventListener("change", (e) => { addFiles(e.target.files); els.file.
 
 document.addEventListener("dragover", (e) => { e.preventDefault(); document.body.classList.add("drag"); });
 document.addEventListener("dragleave", (e) => { if (e.relatedTarget === null) document.body.classList.remove("drag"); });
-document.addEventListener("drop", async (e) => {
+document.addEventListener("drop", (e) => {
   e.preventDefault();
   document.body.classList.remove("drag");
   const dt = e.dataTransfer;
   if (!dt || !dt.files.length) return;
-  // a dropped .md can hand us a writable handle, so binding needs no second dialog
-  const handles = [];
+
+  /* A DataTransfer is only readable synchronously inside the event. Awaiting
+     anything first neuters it and dt.files comes back empty, so snapshot the
+     files and kick off every handle request before yielding. */
+  const files = [...dt.files];
+  const pending = [];
   if (dt.items){
-    for (const item of [...dt.items]){
-      if (item.kind !== "file" || !item.getAsFileSystemHandle) continue;
-      try {
-        const h = await item.getAsFileSystemHandle();
-        if (h && h.kind === "file" && /\.md$/i.test(h.name)) handles.push(h);
-      } catch (err) {}
+    for (const item of dt.items){
+      if (item.kind === "file" && item.getAsFileSystemHandle){
+        try { pending.push(Promise.resolve(item.getAsFileSystemHandle()).catch(() => null)); }
+        catch (err) {}
+      }
     }
   }
-  addFiles(dt.files, handles);
+
+  Promise.all(pending).then((hs) => {
+    // a dropped .md hands us a writable handle, so binding needs no second dialog
+    addFiles(files, hs.filter(h => h && h.kind === "file" && /\.md$/i.test(h.name)));
+  });
 });
 
 audio.addEventListener("loadedmetadata", () => {
