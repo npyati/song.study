@@ -79,7 +79,7 @@ body{
   border:1px solid var(--line-2);
 }
 .rail{
-  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  display:flex; align-items:center; gap:8px; flex-wrap:wrap;
   padding:9px 14px;
   border-bottom:1px solid var(--line-2);
 }
@@ -158,6 +158,55 @@ button{font:inherit;color:inherit}
 .scrub{position:absolute;inset:44px 0 0 0;cursor:col-resize}
 .ghost{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
 .ghost p{color:var(--ink-3);font-size:10.5px;letter-spacing:.06em;text-transform:lowercase;margin:0}
+
+.fxrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.fxrow.off .seg{opacity:.35;pointer-events:none}
+.fxrow .seg button{padding:0 9px}
+.seg button.caps{text-transform:none}
+.peek{
+  display:flex;gap:8px;align-items:baseline;min-height:22px;margin-top:6px;
+  font-size:11px;color:var(--ink-2);white-space:nowrap;overflow:hidden;
+}
+.peek .t{color:var(--ink-3)}
+.peek .x{overflow:hidden;text-overflow:ellipsis;color:var(--ink);font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12.5px}
+.peek .k{color:var(--ink-3);margin-left:auto;flex:none}
+#rTrack{cursor:text}
+#rTrack.editing{outline:1px solid var(--accent);outline-offset:3px;text-overflow:clip}
+
+/* ---------- sheets ---------- */
+.sheet{position:fixed;inset:0;background:color-mix(in srgb, var(--ground) 72%, transparent);display:grid;place-items:start center;padding:6vh 16px;z-index:50;overflow-y:auto}
+.sheetbox{width:min(760px,100%);background:var(--surface);border:1px solid var(--line-2);padding:14px}
+.sheetbox.narrow{width:min(460px,100%)}
+.search{width:100%;height:32px;border:1px solid var(--line-2);border-radius:0;background:var(--surface);color:var(--ink);font:inherit;font-size:12px;padding:0 10px;margin:4px 0 10px;outline:none}
+.search:focus{border-color:var(--accent)}
+.tagcloud{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.tagcloud button{appearance:none;border:1px solid var(--line-2);background:transparent;color:var(--blue);font:inherit;font-size:10.5px;height:22px;padding:0 8px;cursor:pointer}
+.tagcloud button[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.taglist{max-height:52vh;overflow-y:auto}
+.tsong{font-size:10px;letter-spacing:.06em;color:var(--ink-2);padding:12px 0 4px;border-bottom:1px solid var(--line)}
+.trow{display:flex;gap:10px;align-items:baseline;padding:5px 4px;cursor:pointer}
+.trow:hover{background:var(--surface-2)}
+.trow .t{font-size:10.5px;color:var(--ink-2);flex:none}
+.trow .x{font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.45}
+.trow .x .tag{color:var(--blue)}
+.trow mark{background:color-mix(in srgb, var(--accent) 22%, transparent);color:inherit}
+
+.calp{font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:13px;line-height:1.55;color:var(--ink);margin:6px 0 12px;max-width:52ch}
+.caldots{display:flex;gap:6px;min-height:14px}
+.caldots i{width:12px;height:12px;background:var(--line);display:block}
+.caldots i.hit{background:var(--accent)}
+.caldots i.miss{background:transparent;outline:1px solid var(--line-2);outline-offset:-1px}
+.caldots i.now{background:var(--ink)}
+.midimap{display:grid;grid-template-columns:auto 1fr auto;gap:8px 14px;align-items:center}
+.peek.tour{min-height:44px;padding:8px 10px;background:var(--surface-2);border-left:2px solid var(--accent)}
+.peek.tour .x{font-size:15px;white-space:normal}
+.blindnote{font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:13px;color:var(--ink-2);margin:0 0 12px;line-height:1.5}
+body.blind #scopeMod > .modhead:first-child,
+body.blind .scope, body.blind .peek,
+body.blind .ledger, body.blind .keymap,
+body.blind .lcd .readout:not(.keep), body.blind .lcd .armed{display:none}
+body.blind .work{grid-template-columns:minmax(0,1fr)}
+body.blind .capture{border-right:0;max-width:720px;margin:0 auto;width:100%}
 
 /* ---------- work ---------- */
 .work{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.82fr)}
@@ -247,7 +296,9 @@ button{font:inherit;color:inherit}
 .note:hover .del:hover,.note .del:hover{color:var(--accent)}
 
 /* segmented control — both choices visible, the filled one is what you get */
-#bindMd,#sstat{text-transform:none}   /* filenames keep their own casing */
+#bindMd,#sstat{text-transform:none}
+#sstat{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#bindMd{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}   /* filenames keep their own casing */
 .seg{display:inline-flex;height:26px;border:1px solid var(--line-2)}
 .seg button{
   appearance:none;background:transparent;border:0;cursor:pointer;
@@ -263,6 +314,33 @@ button{font:inherit;color:inherit}
 .pnum{flex:none;font-size:10px;letter-spacing:.03em}
 #notes.by-pass .pnum{display:none}
 .note .tag{color:var(--blue)}
+[hidden]{display:none !important}
+.pick{
+  appearance:none;height:26px;border:1px solid var(--line-2);border-radius:0;background:var(--surface);
+  color:var(--ink);font:inherit;font-size:10.5px;padding:0 22px 0 8px;max-width:170px;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink-3) 50%),linear-gradient(135deg,var(--ink-3) 50%,transparent 50%);
+  background-position:calc(100% - 11px) 11px, calc(100% - 7px) 11px;background-size:4px 4px;background-repeat:no-repeat;
+}
+.cmp{display:flex;flex-direction:column;max-height:430px;overflow-y:auto}
+.crow{display:grid;grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);gap:8px;padding:5px 0;border-bottom:1px solid var(--line);align-items:start}
+.crow.chead{position:sticky;top:0;background:var(--surface-2);font-size:10px;letter-spacing:.06em;padding:4px 0 6px}
+.ct{font-size:10.5px;color:var(--ink-3);text-align:center;padding-top:2px}
+.ccell{font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.45;padding:2px 6px;cursor:pointer;border-left:2px solid transparent;overflow-wrap:anywhere}
+.ccell:hover{background:var(--surface)}
+.ccell.sel{background:var(--surface);border-left-color:var(--accent)}
+.ccell.flag::before{content:"\2605 ";color:var(--accent)}
+.ccell.none{cursor:default}
+.ccell .tag{color:var(--blue)}
+.map{overflow-x:auto;padding-bottom:4px}
+.mgrid{display:grid;gap:2px;min-width:0}
+.mlab{font-size:10px;align-self:center}
+.mc{appearance:none;border:0;padding:0;height:16px;background:var(--line);cursor:pointer;opacity:1}
+.mc.on{opacity:.55}
+.mc.flag{opacity:1;outline:1.5px solid var(--ink);outline-offset:-1.5px}
+.mc:hover{outline:1px solid var(--ink-2);outline-offset:-1px}
+.mtick{font-size:9px;color:var(--ink-3);white-space:nowrap;overflow:visible;height:12px}
+.secname{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;font-weight:600;letter-spacing:.04em;color:var(--ink)}
+.secname::before{content:"= ";color:var(--ink-3)}
 .note .x.editing{
   outline:1px solid var(--accent);outline-offset:3px;
   white-space:pre-wrap;cursor:text;
@@ -312,6 +390,9 @@ body.drag .device{border-color:var(--accent)}
     <button class="key" id="bindMd" disabled title="Save this study to a .md file on disk">save to .md</button>
     <button class="key" id="expMd" disabled>.md</button>
     <button class="key" id="expJson" disabled>.json</button>
+    <button class="key" id="posterBtn" disabled title="The whole study as one printable SVG">poster</button>
+    <button class="key" id="blindBtn" disabled aria-pressed="false" title="Hide everything but the note box">blind</button>
+    <button class="key" id="indexBtn" title="Search every note in every study">index</button>
     <button class="key" id="theme" title="Toggle theme">◐</button>
     <input type="file" id="file" accept="audio/*,.json,.md" multiple class="hidden">
   </div>
@@ -320,14 +401,14 @@ body.drag .device{border-color:var(--accent)}
   <div class="mod flush">
     <div class="lcd">
       <div class="readout hot">
-        <span class="lbl">Position</span>
+        <span class="lbl" id="rPosLbl">Position</span>
         <span class="v" id="rPos">–:––.–</span>
       </div>
       <div class="readout">
         <span class="lbl">Remain</span>
         <span class="v" id="rRem">–:––</span>
       </div>
-      <div class="readout">
+      <div class="readout keep">
         <span class="lbl">Pass</span>
         <span class="v" id="rPass">–/––</span>
       </div>
@@ -342,7 +423,7 @@ body.drag .device{border-color:var(--accent)}
       <div class="spacer"></div>
       <div class="readout" style="max-width:240px">
         <span class="lbl">Track</span>
-        <span class="v sm" id="rTrack" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">no file loaded</span>
+        <span class="v sm" id="rTrack" title="Click to rename" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">no file loaded</span>
       </div>
       <div class="armed" id="armed">
         <span class="dot"></span><span class="lbl" style="color:var(--accent)">Armed</span>
@@ -351,14 +432,18 @@ body.drag .device{border-color:var(--accent)}
   </div>
 
   <!-- ============ scope ============ -->
-  <div class="mod">
+  <div class="mod" id="scopeMod">
     <div class="modhead">
       <span class="lbl">Waveform</span>
       <span class="lbl" id="heatLbl" style="color:var(--ink-2)">· pins stack by pass · band below = time spent</span>
       <div class="spacer"></div>
-      <button class="key" id="setA" disabled>Loop A</button>
-      <button class="key" id="setB" disabled>Loop B</button>
-      <button class="key" id="clrLoop" disabled>Clear</button>
+      <button class="key" id="tourBtn" disabled aria-pressed="false" title="Play the song and stop at each flagged note">tour</button>
+      <button class="key" id="specBtn" aria-pressed="false" title="Show a spectrogram behind the waveform — low frequencies at the bottom">spectrum</button>
+      <span style="width:6px"></span>
+      <button class="key" id="setA" disabled title="Set loop start  [">loop a</button>
+      <button class="key" id="setB" disabled title="Set loop end  ]">loop b</button>
+      <button class="key" id="loopTog" disabled aria-pressed="false" title="Loop on / off, keeping the points  \">loop</button>
+      <button class="key" id="clrLoop" disabled title="Clear the loop  shift+\">clear</button>
     </div>
     <div class="scope">
       <div id="pins"></div>
@@ -366,6 +451,7 @@ body.drag .device{border-color:var(--accent)}
       <div class="scrub" id="scrub"></div>
       <div class="ghost" id="ghost"><p>drop an mp3 anywhere</p></div>
     </div>
+    <div class="peek" id="peek" aria-live="polite"></div>
     <div class="modhead" style="margin:10px 0 0">
       <button class="key sq" id="play" disabled>▶</button>
       <button class="key sq" id="back" disabled title="Back 5s">«</button>
@@ -379,6 +465,8 @@ body.drag .device{border-color:var(--accent)}
       <span class="lbl">Lag offset</span>
       <button class="key" id="lagDn">–</button>
       <button class="key" id="lagUp">+</button>
+      <button class="key" id="calBtn" disabled title="Measure your reaction time and set the lag from it">calibrate</button>
+      <button class="key" id="midiBtn" title="Map a knob to scrub, a knob to lag">midi</button>
       <span style="width:8px"></span>
       <span class="lbl">Passes</span>
       <button class="key" id="passDn">–</button>
@@ -389,6 +477,7 @@ body.drag .device{border-color:var(--accent)}
   <!-- ============ work ============ -->
   <div class="work">
     <div class="capture">
+      <p class="blindnote" id="blindNote" hidden>Blind pass. Nothing to look at but the song — press esc with the box empty, or <b>blind</b> up top, to bring the screen back.</p>
       <div class="promptwrap">
         <span class="lbl">listening prompt — what this pass is for</span>
         <div class="prompt">
@@ -397,6 +486,23 @@ body.drag .device{border-color:var(--accent)}
             title="Editable. Each pass keeps its own prompt."
             aria-label="Listening prompt for this pass"></span>
         </div>
+      </div>
+      <div class="fxrow" id="fxRow">
+        <span class="lbl">listen through</span>
+        <div class="seg" id="fxFreq" role="group" aria-label="Frequency filter">
+          <button data-v="full" aria-pressed="true" title="Everything">full</button>
+          <button data-v="lows" aria-pressed="false" title="Low-pass at 220 Hz">lows</button>
+          <button data-v="mids" aria-pressed="false" title="Band-pass around 1.8 kHz — where voices live">mids</button>
+          <button data-v="highs" aria-pressed="false" title="High-pass at 3.5 kHz — cymbals, air, sibilance">highs</button>
+        </div>
+        <div class="seg" id="fxStereo" role="group" aria-label="Stereo view">
+          <button data-v="stereo" aria-pressed="true" title="As mixed">stereo</button>
+          <button data-v="mono" aria-pressed="false" title="Both channels summed">mono</button>
+          <button data-v="side" aria-pressed="false" title="Only what differs between left and right — the width of the mix">side</button>
+          <button data-v="left" class="caps" aria-pressed="false" title="Left channel in both ears">L</button>
+          <button data-v="right" class="caps" aria-pressed="false" title="Right channel in both ears">R</button>
+        </div>
+        <span class="lbl" id="fxNote" style="color:var(--accent)"></span>
       </div>
       <textarea id="entry" placeholder="Start typing the moment you hear it — the timestamp is taken at your first keystroke." aria-label="Note"></textarea>
       <div class="entrybar">
@@ -409,10 +515,14 @@ body.drag .device{border-color:var(--accent)}
         <dt>space</dt><dd>play / pause (when the box is empty)</dd>
         <dt>← →</dt><dd>scrub 5s (when the box is empty)</dd>
         <dt>alt ← →</dt><dd>nudge the pending stamp while typing</dd>
-        <dt>← →</dt><dd>nudge a selected note ±0.25s, shift for ±1s</dd>
+        <dt>← →</dt><dd>nudge a selected note ±0.25s (shift ±1s) — plays a breath from the new spot</dd>
+        <dt>listen</dt><dd>filters are per pass — bass pass defaults to lows, the mix pass to side</dd>
+        <dt>=name</dt><dd>a note starting with = marks a section: =chorus, =bridge</dd>
         <dt>#tag</dt><dd>anything with a hash becomes a tag</dd>
         <dt>click</dt><dd>edit a note where it sits — enter saves, esc reverts</dd>
+        <dt>[ ]</dt><dd>set loop start / end — \ switches the loop on and off, | clears it</dd>
         <dt>esc</dt><dd>clear the box / deselect</dd>
+        <dt>tour</dt><dd>plays the song and stops at each flagged note — space continues</dd>
         <dt>☆ ×</dt><dd>flag a note, or delete it — ⌘Z brings a deleted note back</dd>
       </dl>
     </div>
@@ -422,6 +532,13 @@ body.drag .device{border-color:var(--accent)}
         <span class="lbl">Ledger</span>
         <span class="lbl mono" id="count" style="color:var(--ink-2)">0 notes</span>
         <div class="spacer"></div>
+        <div class="seg" id="viewSeg" role="group" aria-label="Ledger view">
+          <button data-v="list" aria-pressed="true" title="Every note">list</button>
+          <button data-v="compare" aria-pressed="false" title="Two passes side by side">compare</button>
+          <button data-v="map" aria-pressed="false" title="Where your attention went, pass by pass">map</button>
+        </div>
+      </div>
+      <div class="modhead" id="listCtl">
         <button class="key" id="undo" hidden>undo delete</button>
         <button class="key" id="starBtn" title="Show only flagged notes">☆ flagged</button>
         <span class="lbl">sort</span>
@@ -431,8 +548,62 @@ body.drag .device{border-color:var(--accent)}
         </div>
         <button class="key" id="filter">All passes</button>
       </div>
+      <div class="modhead" id="cmpCtl" hidden>
+        <span class="lbl">pass</span>
+        <select class="pick" id="cmpA" aria-label="First pass"></select>
+        <span class="lbl">against</span>
+        <select class="pick" id="cmpB" aria-label="Second pass"></select>
+
+      </div>
+      <div class="modhead" id="cmpNote" hidden><span class="lbl">notes within three seconds of each other share a row</span></div>
+      <div class="modhead" id="mapCtl" hidden>
+        <span class="lbl">rows are passes, columns are ten seconds · filled means you wrote something there · click to go</span>
+      </div>
+      <div id="cmpView" class="cmp" hidden></div>
+      <div id="mapView" class="map" hidden></div>
       <ul id="notes"><li class="empty">Nothing logged yet. Open an MP3, hit play, and type whenever something catches you — the stamp is set on your first keystroke, then pulled back by the lag offset. Notes save themselves as you go — the readout up top says when.</li></ul>
     </div>
+  </div>
+</div>
+
+<div class="sheet" id="tagSheet" hidden role="dialog" aria-modal="true" aria-label="Index of every note">
+  <div class="sheetbox">
+    <div class="modhead">
+      <span class="lbl">index — every note, every study</span>
+      <div class="spacer"></div>
+      <button class="key" id="dirBtn" title="Also read the .notes.md files in a folder">add notes folder</button>
+      <button class="key" id="tagClose">close</button>
+    </div>
+    <input id="tagSearch" class="search" placeholder="search every note…" aria-label="Search every note" autocomplete="off">
+    <div class="tagcloud" id="tagCloud"></div>
+    <p class="lbl" id="tagNote"></p>
+    <div class="taglist" id="tagList"></div>
+  </div>
+</div>
+
+<div class="sheet" id="calSheet" hidden role="dialog" aria-modal="true" aria-label="Calibrate lag">
+  <div class="sheetbox narrow">
+    <div class="modhead"><span class="lbl">calibrate lag</span><div class="spacer"></div><button class="key" id="calClose">close</button></div>
+    <p class="calp" id="calText"></p>
+    <div class="caldots" id="calDots"></div>
+    <div class="modhead" style="margin:12px 0 0">
+      <button class="key" id="calGo">start</button>
+      <div class="spacer"></div>
+      <button class="key" id="calUse" hidden>use</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="midiSheet" hidden role="dialog" aria-modal="true" aria-label="MIDI">
+  <div class="sheetbox narrow">
+    <div class="modhead"><span class="lbl">midi</span><div class="spacer"></div><button class="key" id="midiClose">close</button></div>
+    <p class="calp" id="midiStatus"></p>
+    <div class="midimap" id="midiMap">
+      <span class="lbl">scrub</span><span class="mono" data-show="scrub">—</span><button class="key" data-learn="scrub">learn</button>
+      <span class="lbl">lag</span><span class="mono" data-show="lag">—</span><button class="key" data-learn="lag">learn</button>
+      <span class="lbl">play / pause</span><span class="mono" data-show="play">—</span><button class="key" data-learn="play">learn</button>
+    </div>
+    <p class="lbl" style="margin:12px 0 0">Press learn, then move the control. Knobs and faders sending absolute values map cleanly; endless encoders sending relative steps won't.</p>
   </div>
 </div>
 
@@ -455,6 +626,25 @@ const DEFAULT_LADDER = [
 ];
 const PREROLL = 4;
 
+/* Listening filters. Named for what they do, not for instruments — a low-pass
+   is not "the bass", it is everything under 220 Hz. */
+const FREQ = {
+  full:  { type: "allpass",  f: 1000, q: 0.7,  g: 1   },
+  lows:  { type: "lowpass",  f: 220,  q: 0.7,  g: 1.5 },
+  mids:  { type: "bandpass", f: 1800, q: 0.55, g: 1.8 },
+  highs: { type: "highpass", f: 3500, q: 0.7,  g: 1.8 }
+};
+/* [L→outL, R→outL, L→outR, R→outR] */
+const STEREO = {
+  stereo: [1, 0, 0, 1],
+  mono:   [.5, .5, .5, .5],
+  side:   [.7, -.7, .7, -.7],     // only what differs between the channels
+  left:   [1, 0, 1, 0],
+  right:  [0, 1, 0, 1]
+};
+/* The ladder's own suggestions. Your choices override them per pass. */
+const DEFAULT_FILTERS = { 4: "lows stereo", 6: "mids stereo", 8: "full side" };
+
 /* ===================== state ===================== */
 const audio = new Audio();
 audio.preload = "auto";
@@ -466,7 +656,12 @@ let pending = null;          // pending anchor time (seconds)
 let filterPass = 0;          // 0 = all
 let sortMode = "pass";       // "pass" = grouped by pass, "time" = straight down the song
 let starOnly = false;
-let loopA = null, loopB = null;
+let viewMode = "list";       // "list" | "compare" | "map"
+let cmpA = 0, cmpB = 0;
+let loopA = null, loopB = null, loopOn = false;
+let heard = new Set();       // distinct song-seconds heard since the last pass boundary
+let auditionEnd = null;      // stop playback here (nudge audition)
+let hoverNote = null;        // pin under the pointer
 let counted = false;
 let lastFrame = 0;
 let heatDirty = true, lastHeatPaint = 0;
@@ -475,9 +670,12 @@ let heatDirty = true, lastHeatPaint = 0;
 const $ = (id) => document.getElementById(id);
 const els = {};
 ["files","load","file","expMd","expJson","theme","rPos","rRem","rPass","rRate","rLag","rTrack","sstat","bindMd","starBtn","sortPass","sortTime","undo",
- "armed","pins","wave","scrub","ghost","setA","setB","clrLoop","play","back","fwd","top","repeat",
+ "armed","pins","wave","scrub","ghost","setA","setB","loopTog","clrLoop","peek","rPosLbl","play","back","fwd","top","repeat",
  "slow","half","lagDn","lagUp","passDn","passUp","pn","ladder","entry","stamp","commit","notes",
- "count","filter","hint","heatLbl"].forEach(k => els[k] = $(k));
+ "count","filter","hint","heatLbl","fxRow","fxFreq","fxStereo","fxNote","specBtn","viewSeg","listCtl","cmpCtl","cmpNote","mapCtl","cmpA","cmpB","cmpView","mapView",
+ "indexBtn","tagSheet","tagClose","dirBtn","tagSearch","tagCloud","tagList","tagNote",
+ "posterBtn","blindBtn","midiBtn","tourBtn","calBtn","blindNote","calSheet","calClose","calText","calDots","calGo","calUse",
+ "midiSheet","midiClose","midiStatus","midiMap"].forEach(k => els[k] = $(k));
 
 const ctx = els.wave.getContext("2d");
 const layer = document.createElement("canvas");
@@ -488,9 +686,14 @@ const clamp = (v,a,b) => Math.min(b, Math.max(a, v));
 
 function fmt(s, dec){
   if (!isFinite(s) || s < 0) s = 0;
-  const m = Math.floor(s / 60);
-  const r = s - m * 60;
-  return dec ? `${m}:${r.toFixed(1).padStart(4,"0")}` : `${m}:${String(Math.floor(r)).padStart(2,"0")}`;
+  if (dec){
+    // round to tenths before splitting, or 59.96 renders as 0:60.0
+    const tenths = Math.round(s * 10);
+    const m = Math.floor(tenths / 600);
+    return `${m}:${((tenths - m * 600) / 10).toFixed(1).padStart(4, "0")}`;
+  }
+  const whole = Math.floor(s);
+  return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, "0")}`;
 }
 function passColor(p){ return PASS_COLORS[(p - 1) % PASS_COLORS.length]; }
 function parseTags(text){
@@ -636,14 +839,15 @@ async function saveNow(){
   const okDb = await dbPut(study);
   const okMd = await writeMd();               // the file on disk, when one is bound
   setSaveStatus(okLs || okDb || okMd,
-    okMd ? mdHandle.name : mdHandle ? "file write failed — browser storage only" : "no .md bound");
+    okMd ? mdHandle.name : mdHandle ? "file write failed — kept in browser" : "no .md bound");
   renderStudies();
 }
-let saveTimer = null;
+let saveTimer = null, savePending = false;
 function save(){
   if (!study) return;
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveNow, 400);
+  savePending = true;
+  saveTimer = setTimeout(() => { savePending = false; saveNow(); }, 400);
 }
 
 /* ===================== markdown: the notes file on disk =====================
@@ -651,11 +855,19 @@ function save(){
    is derived playback telemetry and stays in browser storage so the file remains
    something you would actually want to read. */
 
+const yq = (v) => JSON.stringify(String(v == null ? "" : v));   // JSON strings are valid YAML
+function unq(v){
+  if (v == null) return null;
+  v = v.trim();
+  if (v.startsWith('"')){ try { return JSON.parse(v); } catch (e) { return v.slice(1, -1); } }
+  return v;
+}
+
 function toMd(st){
   const head = [
     "---",
-    `title: ${st.title}`,
-    `file: ${st.fileName}`,
+    `title: ${yq(st.title)}`,
+    `file: ${yq(st.fileName)}`,
     `duration: ${(st.duration || 0).toFixed(2)}`,
     `pass: ${st.pass}`,
     `targetPasses: ${st.targetPasses}`,
@@ -663,7 +875,12 @@ function toMd(st){
     `updated: ${new Date().toISOString()}`,
     "prompts:"
   ];
-  st.ladder.forEach((p, i) => head.push(`  ${i + 1}: ${p}`));
+  st.ladder.forEach((p, i) => head.push(`  ${i + 1}: ${yq(p)}`));
+  const fk = Object.keys(st.filters || {}).map(Number).filter(k => k > 0).sort((a,b) => a - b);
+  if (fk.length){
+    head.push("filters:");
+    for (const k of fk) head.push(`  ${k}: ${st.filters[k]}`);
+  }
   head.push("---", "");
 
   const body = [`# ${st.title}`, ""];
@@ -676,7 +893,9 @@ function toMd(st){
     const prompt = st.ladder[p - 1];
     body.push(`## Pass ${p}${prompt ? " — " + prompt : ""}`, "");
     for (const n of byPass.get(p).sort((a,b) => a.t - b.t)){
-      body.push(`- ${n.star ? "\u2605 " : ""}**[${fmt(n.t, true)}]** ${n.text.split("\n").join("\n  ")}`);
+      // continuation lines are indented two spaces; blank lines inside a note stay blank
+      const lines = n.text.split("\n").map((l, i) => i === 0 ? l : (l.trim() ? "  " + l : ""));
+      body.push(`- ${n.star ? "\u2605 " : ""}**[${fmt(n.t, true)}]** ${lines.join("\n")}`);
     }
     body.push("");
   }
@@ -684,10 +903,11 @@ function toMd(st){
 }
 
 function parseMd(text, id, fileName){
+  text = text.replace(/\r\n?/g, "\n");
   const st = {
-    id, fileName: fileName || "", size: 0, title: (fileName || "study").replace(/\.notes\.md$/i, ""),
+    id, fileName: fileName || "", size: 0, title: (fileName || "study").replace(/\.notes\.md$/i, "").replace(/\.md$/i, ""),
     duration: 0, pass: 1, targetPasses: 10, lag: 1.5,
-    ladder: DEFAULT_LADDER.slice(), notes: [], heat: [], createdAt: Date.now()
+    ladder: DEFAULT_LADDER.slice(), filters: {}, notes: [], heat: [], createdAt: Date.now()
   };
 
   let body = text;
@@ -700,8 +920,8 @@ function parseMd(text, id, fileName){
       return r ? r[1].trim() : null;
     };
     const num = (k, d) => { const v = parseFloat(get(k)); return isFinite(v) ? v : d; };
-    st.title        = get("title") || st.title;
-    st.fileName     = get("file") || st.fileName;
+    st.title        = unq(get("title")) || st.title;
+    st.fileName     = unq(get("file")) || st.fileName;
     st.duration     = num("duration", 0);
     st.pass         = Math.max(1, Math.round(num("pass", 1)));
     st.targetPasses = Math.max(1, Math.round(num("targetPasses", 10)));
@@ -711,22 +931,38 @@ function parseMd(text, id, fileName){
       const arr = [];
       for (const line of pr[1].split("\n")){
         const m = line.match(/^[ ]{2}(\d+):[ ]?(.*)$/);
-        if (m) arr[parseInt(m[1], 10) - 1] = m[2];
+        if (m) arr[parseInt(m[1], 10) - 1] = unq(m[2]) || "";
       }
       for (let i = 0; i < arr.length; i++) if (arr[i] === undefined) arr[i] = "";
       if (arr.length) st.ladder = arr;
+    }
+    const fl = block.match(/^filters:\n((?:[ ]{2}\d+:.*\n?)+)/m);
+    if (fl){
+      for (const line of fl[1].split("\n")){
+        const m = line.match(/^[ ]{2}(\d+):[ ]*(\S.*)$/);
+        if (m) st.filters[parseInt(m[1], 10)] = m[2].trim();
+      }
     }
   }
 
   let pass = 1;
   const lines = body.split("\n");
+  const cont = (l) => l !== undefined && l.startsWith("  ") && l.trim() !== "";
   for (let i = 0; i < lines.length; i++){
     const h = lines[i].match(/^##\s+Pass\s+(\d+)/i);
     if (h){ pass = parseInt(h[1], 10); continue; }
     const n = lines[i].match(/^-\s+(\u2605\s+)?\*\*\[(\d+):(\d+(?:\.\d+)?)\]\*\*\s?([\s\S]*)$/);
     if (!n) continue;
     let txt = n[4];
-    while (i + 1 < lines.length && /^[ ]{2}\S/.test(lines[i + 1])) txt += "\n" + lines[++i].slice(2);
+    for (;;){
+      // blank lines belong to the note only if an indented continuation follows them
+      let j = i + 1;
+      while (j < lines.length && lines[j].trim() === "") j++;
+      if (!cont(lines[j])) break;
+      for (let k = i + 1; k < j; k++) txt += "\n";
+      txt += "\n" + lines[j].slice(2);
+      i = j;
+    }
     txt = txt.trim();
     if (!txt) continue;
     st.notes.push({
@@ -742,10 +978,11 @@ function parseMd(text, id, fileName){
 /* ---- the bound file handle ---- */
 let mdHandle = null;   // FileSystemFileHandle for this study's .md
 let mdReady = false;   // write permission actually granted
+let mdSeen = 0;        // lastModified of the file when we last wrote or read it
+let mdWriting = false;
 
-async function handleStore(mode){
-  const d = await db(); if (!d) return null;
-  try { return d.transaction("handles", mode).objectStore("handles"); } catch (e) { return null; }
+async function forgetHandle(id){
+  try { const d = await db(); if (d) d.transaction("handles", "readwrite").objectStore("handles").delete(id); } catch (e) {}
 }
 async function rememberHandle(id, h){
   try {
@@ -773,14 +1010,21 @@ async function ensureWrite(h, ask){
 }
 
 async function writeMd(){
-  if (!mdHandle || !study) return false;
+  if (!mdHandle || !mdReady || !study) return false;
+  mdWriting = true;
   try {
-    if (!mdReady) return false;
+    // someone edited the file since we last touched it — fold that in before overwriting
+    try {
+      const f = await mdHandle.getFile();
+      if (mdSeen && f.lastModified > mdSeen + 500) mergeExternal(await f.text(), mdHandle.name, f.lastModified);
+    } catch (e) {}
     const w = await mdHandle.createWritable();
     await w.write(toMd(study));
     await w.close();
+    try { mdSeen = (await mdHandle.getFile()).lastModified; } catch (e) {}
     return true;
   } catch (e) { return false; }
+  finally { mdWriting = false; }
 }
 
 async function bindMd(){
@@ -824,21 +1068,63 @@ function syncBind(){
   b.classList.toggle("on", !!mdHandle && mdReady);
 }
 
-/* The .md on disk outranks browser storage whenever we can read it. */
-async function loadFromMd(){
+/* Replace the open study with one parsed from markdown. Playback telemetry
+   (the heat band) is local and survives the swap. */
+function adoptMd(txt, name, stamp){
+  const fromMd = parseMd(txt, study.id, name);
+  fromMd.heat = study.heat;
+  fromMd.size = study.size;
+  fromMd.fileName = study.fileName || fromMd.fileName;
+  fromMd.createdAt = study.createdAt;
+  fromMd.updated = stamp || Date.now();
+  study = fromMd;
+  const entry = library.get(study.id);
+  if (entry) entry.study = study;
+  selected = null; lastDeleted = null; syncUndo();
+  heatDirty = true;
+  renderNotes(); syncLadder(); syncLcd(); renderStudies();
+  if (typeof applyPassFilter === "function") applyPassFilter();
+}
+
+/* An outside edit and an unsaved local change at the same time: take the
+   file, then put back any local note it doesn't have. Nothing is dropped;
+   the cost is that a deletion made outside can come back. */
+function mergeExternal(txt, name, stamp){
+  const local = study.notes;
+  const key = (n) => `${n.pass}|${Math.round(n.t * 10)}|${n.text}`;
+  adoptMd(txt, name, stamp);
+  mdSeen = stamp;
+  const have = new Set(study.notes.map(key));
+  let added = 0;
+  for (const n of local) if (!have.has(key(n))){ study.notes.push(n); added++; }
+  if (added){ study.notes.sort((a,b) => a.t - b.t); renderNotes(); }
+  return added;
+}
+
+setInterval(async () => {
+  if (!study || !mdHandle || !mdReady || mdWriting || inlineEditing) return;
+  try {
+    const f = await mdHandle.getFile();
+    if (!mdSeen || f.lastModified <= mdSeen + 500) return;
+    const txt = await f.text();
+    if (savePending){ mergeExternal(txt, mdHandle.name, f.lastModified); save(); }
+    else { adoptMd(txt, mdHandle.name, f.lastModified); mdSeen = f.lastModified; lsSave(study); }
+    els.sstat.textContent = `reloaded ${mdHandle.name} — it changed outside the app`;
+    els.sstat.classList.remove("warn");
+  } catch (e) {}
+}, 1500);
+
+/* Whichever copy is newer wins. A browser copy newer than the file means a
+   write failed while you worked — keep it, and the next save repairs the file. */
+async function loadFromMd(force){
   if (!mdHandle || !study) return false;
   try {
-    const txt = await (await mdHandle.getFile()).text();
+    const file = await mdHandle.getFile();
+    const txt = await file.text();
+    mdSeen = file.lastModified;
     if (!txt.trim()) return false;
-    const fromMd = parseMd(txt, study.id, mdHandle.name);
-    fromMd.heat = study.heat;          // playback telemetry stays local
-    fromMd.size = study.size;
-    fromMd.fileName = study.fileName || fromMd.fileName;
-    fromMd.createdAt = study.createdAt;
-    study = fromMd;
-    const entry = library.get(study.id);
-    if (entry) entry.study = study;
-    renderNotes(); syncLadder(); syncLcd();
+    if (!force && (study.updated || 0) > file.lastModified + 1500) return false;
+    adoptMd(txt, mdHandle.name, file.lastModified);
     return true;
   } catch (e) { return false; }
 }
@@ -861,7 +1147,8 @@ async function onBindClick(){
 /* ===================== files ===================== */
 function fingerprint(file){ return `${file.name}::${file.size}`; }
 
-async function addFiles(fileList, mdHandles){
+async function addFiles(fileList, mdHandles, fromPicker){
+  if (!fromPicker) attachTo = null;       // only the picker opened for a reattach may consume it
   const files = [...fileList];
   const audioFiles = files.filter(f => !/\.(json|md)$/i.test(f.name));
   const jsonFiles  = files.filter(f => /\.json$/i.test(f.name));
@@ -875,17 +1162,10 @@ async function addFiles(fileList, mdHandles){
       break;
     }
     try {
-      const fromMd = parseMd(await f.text(), study.id, f.name);
-      fromMd.heat = study.heat;
-      fromMd.size = study.size;
-      fromMd.fileName = study.fileName || fromMd.fileName;
-      fromMd.createdAt = study.createdAt;
-      study = fromMd;
-      const entry = library.get(study.id);
-      if (entry) entry.study = study;
+      adoptMd(await f.text(), f.name, f.lastModified);
       const h = (mdHandles || []).find(x => x.name === f.name);
       if (h){ mdHandle = h; mdReady = await ensureWrite(h, false); await rememberHandle(study.id, h); }
-      syncBind(); renderNotes(); syncLadder(); syncLcd(); save();
+      syncBind(); save();
     } catch (e) {
       alert(`Couldn't read ${f.name} as a study.`);
     }
@@ -899,6 +1179,8 @@ async function addFiles(fileList, mdHandles){
     if (rec && confirm(`Reopen "${rec.title}" (${rec.notes.length} notes) with ${f.name}?`)){
       const nid = fingerprint(f);
       lsDel(oldId); await dbDel(oldId);
+      const h = await recallHandle(oldId);        // the bound .md follows the study
+      if (h){ await rememberHandle(nid, h); await forgetHandle(oldId); }
       rec.id = nid; rec.fileName = f.name; rec.updated = Date.now();
       lsSave(rec); await dbPut(rec);
       library.set(nid, { file: f, url: URL.createObjectURL(f), study: rec, peaks: null });
@@ -953,45 +1235,144 @@ function freshStudy(id, file){
   };
 }
 
+const HEAT_LBL = "· pins stack by pass · band below = time spent";
+
 async function open(id){
   const entry = library.get(id);
   if (!entry) return;
 
   audio.pause();
+  closeInline(false);
+  if (typeof onLeaveStudy === "function") onLeaveStudy();
   study = (await loadRec(id)) || entry.study || freshStudy(id, entry.file);
   study.fileName = entry.file.name;
   if (!Array.isArray(study.heat)) study.heat = [];
   if (!Array.isArray(study.ladder) || !study.ladder.length) study.ladder = DEFAULT_LADDER.slice();
+  if (!study.filters || typeof study.filters !== "object") study.filters = {};
   entry.study = study;
 
   audio.src = entry.url;
-  loopA = loopB = null; selected = null; pending = null; counted = false;
-  mdHandle = null; mdReady = false;
-  lastDeleted = null; syncUndo(); closeInline(false);
+  loopA = loopB = null; loopOn = false; selected = null; pending = null; counted = false;
+  heard = new Set(); auditionEnd = null; hoverNote = null;
+  mdHandle = null; mdReady = false; mdSeen = 0;
+  lastDeleted = null; syncUndo();
   els.entry.value = "";
+  els.stamp.classList.remove("live"); els.armed.classList.remove("live");
   els.ghost.classList.add("hidden");
   els.rTrack.textContent = study.title;
 
-  peaks = entry.peaks;
-  if (!peaks){
-    els.heatLbl.textContent = "· reading the file…";
-    peaks = await computePeaks(entry.file);
-    entry.peaks = peaks;
-    els.heatLbl.textContent = "· pins stack by pass · band below = time spent";
-  }
+  [ "play","back","fwd","top","setA","setB","clrLoop","expMd","expJson","commit","bindMd",
+    "posterBtn","blindBtn","tourBtn","calBtn" ].forEach(k => els[k].disabled = false);
+  syncLoop();
 
-  [ "play","back","fwd","top","setA","setB","clrLoop","expMd","expJson","commit","bindMd" ]
-    .forEach(k => els[k].disabled = false);
+  // the waveform decodes in the background — playback never waits on it
+  peaks = entry.peaks || null;
+  if (!entry.peaks){
+    els.heatLbl.textContent = "· reading the file…";
+    const want = id;
+    (entry.peaksP ||= computePeaks(entry.file)).then(p => {
+      entry.peaks = p;
+      if (study && study.id === want){ peaks = p; heatDirty = true; syncSpec(); }
+    });
+  }
 
   mdHandle = await recallHandle(id);
   mdReady = mdHandle ? await ensureWrite(mdHandle, false) : false;
-  if (mdReady) await loadFromMd();
+  if (mdReady) await loadFromMd(false);
   syncBind();
 
   heatDirty = true;
   renderStudies(); renderNotes(); layoutCanvas(); paintStatic(); syncLadder(); syncLcd();
+  applyPassFilter();
+  if (typeof onEnterStudy === "function") onEnterStudy();
   els.entry.focus();
   save();
+}
+
+/* ---- spectrogram: a plain radix-2 FFT, log-spaced bins 40 Hz – 16 kHz ---- */
+const SPEC_COLS = 700, SPEC_BINS = 96, FFT_N = 2048;
+function fft(re, im){
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++){
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j){ [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; }
+  }
+  for (let len = 2; len <= n; len <<= 1){
+    const ang = -2 * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang);
+    for (let i = 0; i < n; i += len){
+      let cr = 1, ci = 0;
+      for (let k = 0; k < len / 2; k++){
+        const a = i + k, b = a + len / 2;
+        const tr = re[b] * cr - im[b] * ci, ti = re[b] * ci + im[b] * cr;
+        re[b] = re[a] - tr; im[b] = im[a] - ti;
+        re[a] += tr; im[a] += ti;
+        const nr = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = nr;
+      }
+    }
+  }
+}
+
+async function computeSpec(chans, len, sr){
+  const out = new Float32Array(SPEC_COLS * SPEC_BINS);
+  const re = new Float32Array(FFT_N), im = new Float32Array(FFT_N);
+  const win = new Float32Array(FFT_N);
+  for (let k = 0; k < FFT_N; k++) win[k] = 0.5 - 0.5 * Math.cos(2 * Math.PI * k / (FFT_N - 1));
+  const fLo = 40, fHi = Math.min(16000, sr / 2 - 1);
+  const edge = [];
+  for (let b = 0; b <= SPEC_BINS; b++) edge.push(Math.max(1, Math.round(fLo * Math.pow(fHi / fLo, b / SPEC_BINS) / sr * FFT_N)));
+  let peak = -Infinity;
+  for (let c = 0; c < SPEC_COLS; c++){
+    const start = Math.floor(c * Math.max(0, len - FFT_N) / (SPEC_COLS - 1));
+    for (let k = 0; k < FFT_N; k++){
+      let v = 0;
+      for (let ch = 0; ch < chans.length; ch++) v += chans[ch][start + k] || 0;
+      re[k] = (v / chans.length) * win[k]; im[k] = 0;
+    }
+    fft(re, im);
+    for (let b = 0; b < SPEC_BINS; b++){
+      let m = 0;
+      for (let k = edge[b]; k <= Math.max(edge[b], edge[b + 1] - 1); k++) m = Math.max(m, Math.hypot(re[k], im[k]));
+      const db = 20 * Math.log10(m + 1e-9);
+      out[c * SPEC_BINS + b] = db;
+      if (db > peak) peak = db;
+    }
+    if (c % 80 === 79) await new Promise(r => setTimeout(r, 0));   // stay responsive
+  }
+  const spec = new Uint8Array(out.length);
+  for (let i = 0; i < out.length; i++) spec[i] = Math.round(255 * clamp((out[i] - (peak - 72)) / 72, 0, 1));
+  return spec;
+}
+
+let showSpec = false;
+try { showSpec = localStorage.getItem("songstudy.spec") === "1"; } catch (e) {}
+let specCanvas = null, specKey = "";
+function hexRgb(h){
+  h = h.replace("#", "");
+  if (h.length === 3) h = h.split("").map(c => c + c).join("");
+  const n = parseInt(h, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+function specImage(){
+  const key = peaks.spec.length + css("--ink");
+  if (specCanvas && specKey === key && specCanvas._src === peaks.spec) return specCanvas;
+  specCanvas = document.createElement("canvas");
+  specCanvas.width = SPEC_COLS; specCanvas.height = SPEC_BINS;
+  const g = specCanvas.getContext("2d");
+  const img = g.createImageData(SPEC_COLS, SPEC_BINS);
+  const [r, gg, b] = hexRgb(css("--ink"));
+  for (let c = 0; c < SPEC_COLS; c++){
+    for (let bin = 0; bin < SPEC_BINS; bin++){
+      const v = peaks.spec[c * SPEC_BINS + bin] / 255;
+      const o = ((SPEC_BINS - 1 - bin) * SPEC_COLS + c) * 4;   // low frequencies at the bottom
+      img.data[o] = r; img.data[o + 1] = gg; img.data[o + 2] = b;
+      img.data[o + 3] = Math.round(255 * Math.pow(v, 1.6) * 0.85);
+    }
+  }
+  g.putImageData(img, 0, 0);
+  specCanvas._src = peaks.spec; specKey = key;
+  return specCanvas;
 }
 
 /* ---- decode to peaks (one pass, cached per file) ---- */
@@ -1021,7 +1402,8 @@ async function computePeaks(file){
       }
       mn[i] = lo; mx[i] = hi;
     }
-    return { min: mn, max: mx, n: N };
+    const spec = await computeSpec(chans, len, buf.sampleRate);
+    return { min: mn, max: mx, n: N, spec };
   } catch (e) {
     return null; // unreadable codec — everything else still works
   }
@@ -1038,7 +1420,7 @@ async function renderStudies(){
     const b = document.createElement("button");
     b.className = "fchip" + (study && study.id === id ? " on" : "");
     b.innerHTML = `<span class="dot"></span><b></b><span class="n"></span>`;
-    b.querySelector("b").textContent = entry.file.name.replace(/\.[^.]+$/, "");
+    b.querySelector("b").textContent = (rec && rec.title) || entry.file.name.replace(/\.[^.]+$/, "");
     b.querySelector(".n").textContent = rec && rec.notes.length ? rec.notes.length : "";
     b.addEventListener("click", () => { attachTo = null; open(id); });
     els.files.appendChild(b);
@@ -1073,7 +1455,12 @@ function layoutCanvas(){
   heatDirty = true;
 }
 
-function css(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+let tokens = {};
+function css(name){
+  if (!(name in tokens)) tokens[name] = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return tokens[name];
+}
+function refreshTokens(){ tokens = {}; heatDirty = true; }
 
 function paintStatic(){
   const w = els.wave.clientWidth, h = els.wave.clientHeight;
@@ -1083,7 +1470,8 @@ function paintStatic(){
 
   // heat band — seconds actually listened to
   if (study && study.heat && study.heat.length){
-    const max = Math.max(...study.heat, 1);
+    let max = 1;                       // a forward scrub leaves holes; Math.max(...) would be NaN
+    for (const v of study.heat) if (v > max) max = v;
     const dur = study.duration || audio.duration || 1;
     for (let s = 0; s < study.heat.length; s++){
       const v = (study.heat[s] || 0) / max;
@@ -1113,10 +1501,32 @@ function paintStatic(){
     }
   }
 
+  // section boundaries, named along the bottom edge
+  if (gdur && sectionCache.length){
+    lctx.font = '10px "IBM Plex Mono", ui-monospace, monospace';
+    lctx.textBaseline = "bottom";
+    for (const n of sectionCache){
+      const x = Math.round((n.t / gdur) * w) + 0.5;
+      lctx.fillStyle = css("--ink-2");
+      lctx.globalAlpha = .55;
+      lctx.fillRect(x, 0, 1, waveH);
+      lctx.globalAlpha = 1;
+      lctx.fillStyle = css("--ink");
+      lctx.fillText(sectionName(n), x + 4, waveH - 3);
+    }
+  }
+
+  // spectrogram under the waveform, when it's switched on
+  const spec = showSpec && peaks && peaks.spec;
+  if (spec){
+    lctx.imageSmoothingEnabled = true;
+    lctx.drawImage(specImage(), 0, 0, w, waveH);
+  }
+
   // waveform
   if (peaks){
     lctx.fillStyle = css("--ink-2");
-    lctx.globalAlpha = 0.55;
+    lctx.globalAlpha = spec ? 0.22 : 0.55;
     const n = peaks.n;
     for (let i = 0; i < n; i++){
       const x = (i / n) * w;
@@ -1145,17 +1555,24 @@ function paint(){
   const dur = study ? (study.duration || audio.duration || 0) : 0;
   if (!dur) return;
 
-  // loop region
+  // loop region — kept but dimmed while the loop is switched off
   if (loopA !== null){
     const x1 = (loopA / dur) * w;
     const x2 = loopB !== null ? (loopB / dur) * w : x1 + 1;
     ctx.fillStyle = css("--blue");
-    ctx.globalAlpha = .13;
+    ctx.globalAlpha = loopOn ? .13 : .05;
     ctx.fillRect(x1, 0, Math.max(1, x2 - x1), h - 16);
-    ctx.globalAlpha = 1;
-    ctx.fillStyle = css("--blue");
+    ctx.globalAlpha = loopOn ? 1 : .35;
     ctx.fillRect(x1, 0, 1.5, h - 16);
     if (loopB !== null) ctx.fillRect(x2 - 1.5, 0, 1.5, h - 16);
+    ctx.globalAlpha = 1;
+  }
+
+  // hovered pin: a tick straight through the waveform
+  if (hoverNote){
+    const hx = Math.round((hoverNote.t / dur) * w) + 0.5;
+    ctx.fillStyle = passColor(hoverNote.pass);
+    ctx.fillRect(hx - 0.5, 0, 1, h - 16);
   }
 
   // playhead
@@ -1184,17 +1601,150 @@ function renderPins(){
     b.style.color = c;
     b.style.left = (n.t / dur) * 100 + "%";
     b.style.top = (clamp(n.pass - 1, 0, span) / span) * lane + 3 + "px";
-    b.title = `${n.star ? "\u2605 " : ""}pass ${n.pass} · ${fmt(n.t, true)} — ${n.text}`;
-    b.setAttribute("aria-label", b.title);
+    b.setAttribute("aria-label", `${n.star ? "flagged, " : ""}pass ${n.pass}, ${fmt(n.t, true)}: ${n.text}`);
+    b.addEventListener("mouseenter", () => { hoverNote = n; setPeek(n); });
+    b.addEventListener("mouseleave", () => { if (hoverNote === n){ hoverNote = null; setPeek(null); } });
+    b.addEventListener("focus", () => { hoverNote = n; setPeek(n); });
+    b.addEventListener("blur", () => { if (hoverNote === n){ hoverNote = null; setPeek(null); } });
     b.addEventListener("click", (e) => { e.stopPropagation(); selectNote(n.id, true); });
     els.pins.appendChild(b);
   }
 }
 
+function setPeek(n, extra){
+  if (!n){ els.peek.innerHTML = ""; els.peek.classList.remove("tour"); return; }
+  els.peek.innerHTML =
+    `<span style="color:${passColor(n.pass)}">${n.star ? "\u2605 " : ""}p${n.pass}</span>` +
+    `<span class="t">${fmt(n.t, true)}</span>` +
+    `<span class="x">${escapeHtml(n.text.replace(/\n+/g, " / "))}</span>` +
+    (extra ? `<span class="k">${extra}</span>` : "");
+}
+
 /* ===================== notes ===================== */
+/* A note whose text starts with "=" names a section: "=chorus", "=bridge 2". */
+const isSection = (n) => /^=\s*\S/.test(n.text);
+const sectionName = (n) => n.text.replace(/^=\s*/, "").split("\n")[0].trim();
+let sectionCache = [];
+function currentSection(t){
+  let name = "";
+  for (const n of sectionCache){ if (n.t <= t + 0.05) name = sectionName(n); else break; }
+  return name;
+}
+
 function visibleNotes(){
   if (!study) return [];
+  if (viewMode === "compare") return study.notes.filter(n => n.pass === cmpA || n.pass === cmpB);
+  if (viewMode === "map") return study.notes;
   return study.notes.filter(n => (!filterPass || n.pass === filterPass) && (!starOnly || n.star));
+}
+
+const cellText = (n) => isSection(n)
+  ? `<span class="secname">${escapeHtml(sectionName(n))}</span>`
+  : escapeHtml(n.text).replace(/#([\p{L}\p{N}_-]+)/gu, '<span class="tag">#$1</span>');
+
+/* Two passes on one timeline. Notes within three seconds of each other share
+   a row, so the same moment heard twice reads as one line. */
+function renderCompare(){
+  const v = els.cmpView;
+  v.innerHTML = "";
+  const passes = [...new Set(study.notes.map(n => n.pass))].sort((a,b) => a - b);
+  if (passes.length < 2){
+    v.innerHTML = `<p class="empty">Compare needs notes on at least two passes.</p>`;
+    return;
+  }
+  if (!passes.includes(cmpA)) cmpA = passes[0];
+  if (!passes.includes(cmpB) || cmpB === cmpA) cmpB = passes[passes.length - 1] === cmpA ? passes[0] : passes[passes.length - 1];
+  for (const [sel, val] of [[els.cmpA, cmpA], [els.cmpB, cmpB]]){
+    sel.innerHTML = passes.map(p => `<option value="${p}"${p === val ? " selected" : ""}>${p}${study.ladder[p - 1] ? " — " + escapeHtml(study.ladder[p - 1]) : ""}</option>`).join("");
+  }
+
+  const A = study.notes.filter(n => n.pass === cmpA).sort((a,b) => a.t - b.t);
+  const B = study.notes.filter(n => n.pass === cmpB).sort((a,b) => a.t - b.t);
+  const rows = [];
+  let i = 0, j = 0;
+  while (i < A.length || j < B.length){
+    const a = A[i], b = B[j];
+    if (a && b && Math.abs(a.t - b.t) <= 3){ rows.push([a, b]); i++; j++; }
+    else if (!b || (a && a.t <= b.t)){ rows.push([a, null]); i++; }
+    else { rows.push([null, b]); j++; }
+  }
+
+  const head = document.createElement("div");
+  head.className = "crow chead";
+  head.innerHTML = `<span style="color:${passColor(cmpA)}">pass ${cmpA}</span><span></span><span style="color:${passColor(cmpB)}">pass ${cmpB}</span>`;
+  v.appendChild(head);
+  for (const [a, b] of rows){
+    const r = document.createElement("div");
+    r.className = "crow";
+    const t = Math.min(a ? a.t : Infinity, b ? b.t : Infinity);
+    const cell = (n) => {
+      const c = document.createElement("div");
+      c.className = "ccell" + (n ? "" : " none") + (n && selected === n.id ? " sel" : "") + (n && n.star ? " flag" : "");
+      if (n){
+        c.innerHTML = cellText(n);
+        c.tabIndex = 0;
+        c.addEventListener("click", () => selectNote(n.id, true, false));
+        c.addEventListener("keydown", (e) => { if (e.key === "Enter") selectNote(n.id, true, false); });
+      }
+      return c;
+    };
+    const mid = document.createElement("span");
+    mid.className = "ct";
+    mid.textContent = fmt(t, true);
+    r.append(cell(a), mid, cell(b));
+    v.appendChild(r);
+  }
+}
+
+/* Where your attention went. Presence only — no counts, nothing to chase. */
+function renderMap(){
+  const v = els.mapView;
+  v.innerHTML = "";
+  const dur = study.duration || audio.duration || 0;
+  if (!dur || !study.notes.length){
+    v.innerHTML = `<p class="empty">The map fills in as you write.</p>`;
+    return;
+  }
+  const cols = Math.max(1, Math.ceil(dur / 10));
+  const maxPass = Math.max(study.targetPasses, ...study.notes.map(n => n.pass));
+  const cells = new Map();
+  for (const n of study.notes){
+    const k = `${n.pass}:${Math.min(cols - 1, Math.floor(n.t / 10))}`;
+    const c = cells.get(k) || { star: false, id: n.id };
+    if (n.star) c.star = true;
+    cells.set(k, c);
+  }
+  const grid = document.createElement("div");
+  grid.className = "mgrid";
+  grid.style.gridTemplateColumns = `26px repeat(${cols}, minmax(0, 1fr))`;
+  for (let p = 1; p <= maxPass; p++){
+    const lab = document.createElement("span");
+    lab.className = "mlab";
+    lab.textContent = p > study.targetPasses ? "+" : `p${p}`;
+    lab.style.color = passColor(p);
+    grid.appendChild(lab);
+    for (let c = 0; c < cols; c++){
+      const hit = cells.get(`${p}:${c}`);
+      const d = document.createElement("button");
+      d.className = "mc" + (hit ? " on" : "") + (hit && hit.star ? " flag" : "");
+      if (hit) d.style.background = passColor(p);
+      d.setAttribute("aria-label", `pass ${p}, ${fmt(c * 10)}${hit ? ", has notes" : ""}`);
+      d.addEventListener("click", () => {
+        if (hit) selectNote(hit.id, true, false);
+        else { jump(c * 10); playAudio(); els.entry.focus(); }
+      });
+      grid.appendChild(d);
+    }
+  }
+  // minute ticks along the bottom
+  grid.appendChild(document.createElement("span"));
+  for (let c = 0; c < cols; c++){
+    const t = document.createElement("span");
+    t.className = "mtick";
+    if ((c * 10) % 60 === 0) t.textContent = fmt(c * 10);
+    grid.appendChild(t);
+  }
+  v.appendChild(grid);
 }
 
 let inlineEditing = null;   // note id whose text is open for editing
@@ -1253,9 +1803,11 @@ function toggleStar(id){
 
 function noteRow(n){
   const li = document.createElement("li");
-  li.className = "note" + (selected === n.id ? " sel" : "");
+  li.className = "note" + (selected === n.id ? " sel" : "") + (isSection(n) ? " section" : "");
   li.tabIndex = 0;
-  const body = escapeHtml(n.text).replace(/#([\p{L}\p{N}_-]+)/gu, '<span class="tag">#$1</span>');
+  const body = isSection(n)
+    ? `<span class="secname">${escapeHtml(sectionName(n))}</span>`
+    : escapeHtml(n.text).replace(/#([\p{L}\p{N}_-]+)/gu, '<span class="tag">#$1</span>');
   li.innerHTML =
     `<button class="star${n.star ? " on" : ""}" title="Flag this note" aria-pressed="${!!n.star}">${n.star ? "\u2605" : "\u2606"}</button>` +
     `<span class="t">${fmt(n.t, true)}</span>` +
@@ -1275,8 +1827,23 @@ function noteRow(n){
 
 function renderNotes(){
   closeInline(true, true);        // commit any open edit before the list is rebuilt
+  sectionCache = study ? study.notes.filter(isSection).sort((a,b) => a.t - b.t) : [];
+  heatDirty = true;
   const list = els.notes;
   list.innerHTML = "";
+
+  els.notes.hidden = viewMode !== "list";
+  els.listCtl.hidden = viewMode !== "list";
+  els.cmpView.hidden = els.cmpCtl.hidden = els.cmpNote.hidden = viewMode !== "compare";
+  els.mapView.hidden = els.mapCtl.hidden = viewMode !== "map";
+  if (study && viewMode !== "list"){
+    if (viewMode === "compare") renderCompare(); else renderMap();
+    const total = study.notes.length;
+    els.count.textContent = `${total} note${total === 1 ? "" : "s"}`;
+    renderPins();
+    return;
+  }
+
   if (!study || !study.notes.length){
     const li = document.createElement("li");
     li.className = "empty";
@@ -1312,7 +1879,8 @@ function renderNotes(){
     for (const p of [...byPass.keys()].sort((a,b) => a - b)){
       const head = document.createElement("li");
       head.className = "passhead";
-      head.innerHTML = `<span class="lbl" style="color:${passColor(p)}">Pass ${String(p).padStart(2,"0")}</span><span class="bar"></span><span class="lbl">${byPass.get(p).length}</span>`;
+      const label = p > study.targetPasses ? "after the study" : `Pass ${String(p).padStart(2,"0")}`;
+      head.innerHTML = `<span class="lbl" style="color:${passColor(p)}">${label}</span><span class="bar"></span><span class="lbl">${byPass.get(p).length}</span>`;
       list.appendChild(head);
       for (const n of byPass.get(p).sort((a,b) => a.t - b.t)) list.appendChild(noteRow(n));
     }
@@ -1329,7 +1897,11 @@ function renderNotes(){
 function selectNote(id, seek, edit){
   selected = id;
   const n = study.notes.find(x => x.id === id);
-  if (n && seek) jump(Math.max(0, n.t - PREROLL));
+  if (n && seek){
+    auditionEnd = null;
+    jump(Math.max(0, n.t - PREROLL));
+    playAudio();
+  }
   renderNotes();
   const el = els.notes.querySelector(".note.sel");
   if (el) el.scrollIntoView({ block: "nearest" });
@@ -1362,11 +1934,22 @@ function syncUndo(){ els.undo.hidden = !lastDeleted; }
 
 const HINT_DEFAULT = "enter to log · shift+enter for a new line";
 
+/* Your reaction delay in song time. Paused, you are placed rather than late;
+   at half speed a second of reaction covers half a second of song. */
+function effLag(){ return audio.paused ? 0 : study.lag * audio.playbackRate; }
+
+let hintTimer = null;
+function flashHint(msg){
+  els.hint.textContent = msg;
+  clearTimeout(hintTimer);
+  hintTimer = setTimeout(() => { if (els.hint.textContent === msg) els.hint.textContent = HINT_DEFAULT; }, 5000);
+}
+
 function commitNote(){
   const text = els.entry.value.trim();
   if (!text || !study) return;
   const dur = study.duration || audio.duration || 0;
-  const t = clamp(pending !== null ? pending : audio.currentTime - study.lag, 0, dur);
+  const t = clamp(pending !== null ? pending : audio.currentTime - effLag(), 0, dur);
   study.notes.push({
     id: Math.random().toString(36).slice(2, 10),
     t, text, pass: study.pass, tags: parseTags(text), at: Date.now()
@@ -1386,10 +1969,129 @@ function jump(t){
   audio.currentTime = clamp(t, 0, Math.max(0, dur - 0.05));
   counted = false;
 }
+/* ---- the audio graph: element → band filter → makeup gain → stereo matrix ----
+   Built on first play, inside a gesture, because routing an element through
+   Web Audio needs a running context. */
+const FX = { ctx: null, biq: null, makeup: null, g: [], ok: null };
+let fxFreq = "full", fxStereo = "stereo";
+
+function ensureGraph(){
+  if (FX.ok !== null) return FX.ok;
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    const c = new AC();
+    const src = c.createMediaElementSource(audio);
+    const pre = c.createGain();                 // upmix mono files so both channels exist
+    pre.channelCount = 2; pre.channelCountMode = "explicit"; pre.channelInterpretation = "speakers";
+    const biq = c.createBiquadFilter();
+    const makeup = c.createGain();
+    const split = c.createChannelSplitter(2);
+    const merge = c.createChannelMerger(2);
+    const g = [0, 1, 2, 3].map(() => c.createGain());
+    src.connect(pre); pre.connect(biq); biq.connect(makeup); makeup.connect(split);
+    split.connect(g[0], 0); g[0].connect(merge, 0, 0);
+    split.connect(g[1], 1); g[1].connect(merge, 0, 0);
+    split.connect(g[2], 0); g[2].connect(merge, 0, 1);
+    split.connect(g[3], 1); g[3].connect(merge, 0, 1);
+    merge.connect(c.destination);
+    Object.assign(FX, { ctx: c, biq, makeup, g, ok: true });
+    applyFx(true);
+  } catch (e) {
+    FX.ok = false;
+  }
+  syncFxUi();
+  return FX.ok;
+}
+
+function applyFx(now){
+  if (!FX.ctx) return;
+  const t = FX.ctx.currentTime, k = now ? 0.001 : 0.03;
+  const f = FREQ[fxFreq] || FREQ.full, m = STEREO[fxStereo] || STEREO.stereo;
+  FX.biq.type = f.type;
+  FX.biq.frequency.setTargetAtTime(f.f, t, k);
+  FX.biq.Q.setTargetAtTime(f.q, t, k);
+  FX.makeup.gain.setTargetAtTime(f.g, t, k);
+  m.forEach((v, i) => FX.g[i].gain.setTargetAtTime(v, t, k));
+}
+
+function passFilter(pass){
+  return (study && study.filters && study.filters[pass]) || DEFAULT_FILTERS[pass] || "full stereo";
+}
+function applyPassFilter(){
+  if (!study) return;
+  const [f, st] = passFilter(study.pass).split(/\s+/);
+  fxFreq = FREQ[f] ? f : "full";
+  fxStereo = STEREO[st] ? st : "stereo";
+  applyFx(); syncFxUi();
+}
+function chooseFilter(kind, value){
+  if (!study) return;
+  if (kind === "freq") fxFreq = value; else fxStereo = value;
+  const v = `${fxFreq} ${fxStereo}`;
+  const fallback = DEFAULT_FILTERS[study.pass] || "full stereo";
+  if (v === fallback) delete study.filters[study.pass]; else study.filters[study.pass] = v;
+  applyFx(); syncFxUi(); save();
+  els.entry.focus();
+}
+function syncFxUi(){
+  for (const b of els.fxFreq.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.v === fxFreq));
+  for (const b of els.fxStereo.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.v === fxStereo));
+  const off = FX.ok === false;
+  els.fxRow.classList.toggle("off", off);
+  els.fxNote.textContent = off ? "filters unavailable in this browser"
+    : (fxFreq !== "full" || fxStereo !== "stereo") ? "filtered" : "";
+}
+
+function playAudio(){
+  ensureGraph();
+  if (FX.ctx && FX.ctx.state === "suspended") FX.ctx.resume();
+  return audio.play().catch(() => {});
+}
 function toggle(){
-  if (audio.paused) audio.play().catch(() => {});
+  auditionEnd = null;
+  if (audio.paused) playAudio();
   else audio.pause();
   syncTransport();
+}
+const repeatOn = () => els.repeat.getAttribute("aria-pressed") === "true";
+
+/* ---- loop: points survive switching the loop off ---- */
+function setLoopA(){
+  loopA = audio.currentTime;
+  if (loopB !== null && loopB <= loopA) loopB = null;
+  loopOn = loopB !== null;
+  syncLoop();
+}
+function setLoopB(){
+  loopB = audio.currentTime;
+  if (loopA === null) loopA = 0;
+  if (loopB < loopA) [loopA, loopB] = [loopB, loopA];
+  loopOn = loopB > loopA;
+  syncLoop();
+}
+function toggleLoop(){ if (loopA !== null && loopB !== null) loopOn = !loopOn; syncLoop(); }
+function clearLoop(){ loopA = loopB = null; loopOn = false; syncLoop(); }
+function syncLoop(){
+  els.loopTog.disabled = !(study && loopA !== null && loopB !== null);
+  els.loopTog.setAttribute("aria-pressed", String(!!loopOn));
+}
+
+/* ---- a pass only counts if you actually heard three quarters of it ---- */
+function completePass(){
+  if (study.pass > study.targetPasses) return;          // no 11/10
+  study.pass += 1;
+  const done = study.pass > study.targetPasses;
+  if (typeof applyPassFilter === "function") applyPassFilter();
+  if (typeof onPassComplete === "function") onPassComplete(study.pass - 1);
+  syncLadder(); syncLcd(); renderNotes(); save();
+  if (done){
+    audio.pause();
+    audio.currentTime = 0;
+    flashHint(`study complete — ${study.targetPasses} passes. write the thesis.`);
+  } else if (repeatOn()){
+    audio.currentTime = 0;
+    playAudio();
+  }
 }
 function syncTransport(){
   els.play.textContent = audio.paused ? "▶" : "❚❚";
@@ -1407,20 +2109,26 @@ function setRate(r){
 
 function syncLadder(){
   if (!study) return;
-  const i = clamp(study.pass, 1, study.ladder.length) - 1;
-  els.pn.textContent = String(study.pass).padStart(2, "0");
-  els.ladder.value = study.ladder[i] || "";
+  const done = study.pass > study.targetPasses;
+  els.pn.textContent = done ? "\u2713" : String(study.pass).padStart(2, "0");
+  els.ladder.value = study.ladder[study.pass - 1] || "";
+  els.ladder.placeholder = done ? "done — write the thesis" : "what is this pass for?";
   const silent = study.pass === 1 && /no notes/i.test(study.ladder[0] || "");
-  els.entry.placeholder = silent
-    ? "Pass 1 is a listening pass — but the box still works if you need it."
-    : "Start typing the moment you hear it — the timestamp is taken at your first keystroke.";
+  els.entry.placeholder = done
+    ? "The study is complete. What is this song, now?"
+    : silent
+      ? "Pass 1 is a listening pass — but the box still works if you need it."
+      : "Start typing the moment you hear it — the timestamp is taken at your first keystroke.";
 }
 
 function syncLcd(){
   const dur = study ? (study.duration || audio.duration || 0) : 0;
   els.rPos.textContent = study ? fmt(audio.currentTime, true) : "–:––.–";
+  const sec = study ? currentSection(audio.currentTime) : "";
+  const lbl = sec ? `position · ${sec}` : "position";
+  if (els.rPosLbl.textContent !== lbl) els.rPosLbl.textContent = lbl;
   els.rRem.textContent = dur ? "-" + fmt(Math.max(0, dur - audio.currentTime)) : "–:––";
-  els.rPass.textContent = study ? `${study.pass}/${study.targetPasses}` : "–/––";
+  els.rPass.textContent = !study ? "–/––" : study.pass > study.targetPasses ? "done" : `${study.pass}/${study.targetPasses}`;
   els.rRate.textContent = audio.playbackRate.toFixed(2) + "×";
   els.rLag.textContent = (study ? study.lag : 1.5).toFixed(1) + "s";
 }
@@ -1434,26 +2142,30 @@ function frame(now){
 
   const dur = study.duration || audio.duration || 0;
   const cur = audio.currentTime;
+  const playing = !audio.paused;
 
-  if (!audio.paused && dt > 0 && dt < 0.5){
+  if (playing && dt > 0 && dt < 0.5){
     const s = Math.floor(cur);
-    study.heat[s] = (study.heat[s] || 0) + dt;
+    study.heat[s] = (study.heat[s] || 0) + dt * audio.playbackRate;   // song-seconds, not wall-clock
+    heard.add(s);
     if (now - lastHeatPaint > 900) heatDirty = true;
   }
 
-  // loop
-  if (loopA !== null && loopB !== null && loopB > loopA){
-    if (cur > loopB || cur < loopA - 0.3) audio.currentTime = loopA;
-  } else if (dur){
-    // pass counting (paused while looping)
+  if (auditionEnd !== null && cur >= auditionEnd){ audio.pause(); auditionEnd = null; }
+  if (typeof tourTick === "function") tourTick(cur);
+
+  if (loopOn && loopA !== null && loopB !== null && loopB > loopA){
+    if (playing && (cur > loopB || cur < loopA - 0.3)) audio.currentTime = loopA;
+  } else if (dur && playing && !(typeof touring === "function" && touring())){
     if (cur < 1) counted = false;
     if (!counted && cur >= dur - 0.35){
       counted = true;
-      study.pass = Math.min(study.pass + 1, 99);
-      syncLadder(); save();
-      if (els.repeat.getAttribute("aria-pressed") === "true"){
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
+      const enough = heard.size >= Math.floor(dur * 0.75);
+      heard = new Set();
+      if (enough) completePass();
+      else {
+        flashHint("that pass didn't count — less than three quarters of the song was heard");
+        if (repeatOn()){ audio.currentTime = 0; playAudio(); }
       }
     }
   }
@@ -1475,32 +2187,10 @@ function download(name, text, mime){
   a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
-function toMarkdown(){
-  const dur = study.duration || 0;
-  const lines = [
-    `# ${study.title}`,
-    ``,
-    `\`${study.fileName}\` · ${fmt(dur)} · ${study.pass - 1} pass${study.pass - 1 === 1 ? "" : "es"} completed · ${study.notes.length} notes`,
-    ``
-  ];
-  const byPass = new Map();
-  for (const n of study.notes){
-    if (!byPass.has(n.pass)) byPass.set(n.pass, []);
-    byPass.get(n.pass).push(n);
-  }
-  for (const p of [...byPass.keys()].sort((a,b) => a - b)){
-    lines.push(`## Pass ${p} — ${study.ladder[p - 1] || ""}`.trimEnd(), ``);
-    for (const n of byPass.get(p).sort((a,b) => a.t - b.t)){
-      lines.push(`- ${n.star ? "\u2605 " : ""}**[${fmt(n.t, true)}]** ${n.text}`);
-    }
-    lines.push(``);
-  }
-  return lines.join("\n");
-}
-
 /* ===================== events ===================== */
-els.load.addEventListener("click", () => els.file.click());
-els.file.addEventListener("change", (e) => { addFiles(e.target.files); els.file.value = ""; });
+els.load.addEventListener("click", () => { attachTo = null; els.file.click(); });
+els.file.addEventListener("change", (e) => { addFiles(e.target.files, [], true); els.file.value = ""; });
+els.file.addEventListener("cancel", () => { attachTo = null; });
 
 document.addEventListener("dragover", (e) => { e.preventDefault(); document.body.classList.add("drag"); });
 document.addEventListener("dragleave", (e) => { if (e.relatedTarget === null) document.body.classList.remove("drag"); });
@@ -1551,14 +2241,15 @@ els.repeat.addEventListener("click", () => {
 els.slow.addEventListener("click", () => setRate(audio.playbackRate === 0.75 ? 1 : 0.75));
 els.half.addEventListener("click", () => setRate(audio.playbackRate === 0.5 ? 1 : 0.5));
 
-els.setA.addEventListener("click", () => { loopA = audio.currentTime; if (loopB !== null && loopB <= loopA) loopB = null; });
-els.setB.addEventListener("click", () => { loopB = audio.currentTime; if (loopA === null) loopA = 0; });
-els.clrLoop.addEventListener("click", () => { loopA = loopB = null; });
+els.setA.addEventListener("click", () => { setLoopA(); els.entry.focus(); });
+els.setB.addEventListener("click", () => { setLoopB(); els.entry.focus(); });
+els.loopTog.addEventListener("click", () => { toggleLoop(); els.entry.focus(); });
+els.clrLoop.addEventListener("click", () => { clearLoop(); els.entry.focus(); });
 
 els.lagUp.addEventListener("click", () => { if (study){ study.lag = clamp(study.lag + 0.25, 0, 6); syncLcd(); save(); } });
 els.lagDn.addEventListener("click", () => { if (study){ study.lag = clamp(study.lag - 0.25, 0, 6); syncLcd(); save(); } });
-els.passUp.addEventListener("click", () => { if (study){ study.targetPasses = clamp(study.targetPasses + 1, 1, 40); renderPins(); syncLcd(); save(); } });
-els.passDn.addEventListener("click", () => { if (study){ study.targetPasses = clamp(study.targetPasses - 1, 1, 40); renderPins(); syncLcd(); save(); } });
+els.passUp.addEventListener("click", () => { if (study){ study.targetPasses = clamp(study.targetPasses + 1, 1, 40); renderNotes(); syncLadder(); syncLcd(); save(); } });
+els.passDn.addEventListener("click", () => { if (study){ study.targetPasses = clamp(study.targetPasses - 1, 1, 40); renderNotes(); syncLadder(); syncLcd(); save(); } });
 
 els.bindMd.addEventListener("click", onBindClick);
 els.undo.addEventListener("click", undoDelete);
@@ -1569,6 +2260,15 @@ els.starBtn.addEventListener("click", () => {
   els.starBtn.classList.toggle("on", starOnly);
   renderNotes();
 });
+
+function setView(mode){
+  viewMode = mode;
+  for (const b of els.viewSeg.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.v === mode));
+  renderNotes();
+}
+els.viewSeg.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) setView(b.dataset.v); });
+els.cmpA.addEventListener("change", () => { cmpA = +els.cmpA.value; if (cmpA === cmpB) cmpB = 0; renderNotes(); });
+els.cmpB.addEventListener("change", () => { cmpB = +els.cmpB.value; if (cmpA === cmpB) cmpA = 0; renderNotes(); });
 
 function setSort(mode){
   sortMode = mode;
@@ -1592,21 +2292,35 @@ els.filter.addEventListener("click", () => {
 
 els.ladder.addEventListener("input", () => {
   if (!study) return;
-  const i = clamp(study.pass, 1, 40) - 1;
+  const i = study.pass - 1;
   while (study.ladder.length <= i) study.ladder.push("");
   study.ladder[i] = els.ladder.value;
   save();
 });
 
 els.commit.addEventListener("click", commitNote);
-els.expMd.addEventListener("click", () => download(`${study.title}.notes.md`, toMarkdown(), "text/markdown"));
+function syncSpec(){
+  els.specBtn.setAttribute("aria-pressed", String(showSpec));
+  if (study) els.heatLbl.textContent = showSpec ? "· spectrum 40 Hz – 16 kHz, lows at the bottom" : HEAT_LBL;
+  heatDirty = true;
+}
+els.specBtn.addEventListener("click", () => {
+  showSpec = !showSpec;
+  try { localStorage.setItem("songstudy.spec", showSpec ? "1" : "0"); } catch (e) {}
+  syncSpec();
+  if (study) els.entry.focus();
+});
+syncSpec();
+els.fxFreq.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) chooseFilter("freq", b.dataset.v); });
+els.fxStereo.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) chooseFilter("stereo", b.dataset.v); });
+els.expMd.addEventListener("click", () => download(`${study.title}.notes.md`, toMd(study), "text/markdown"));
 els.expJson.addEventListener("click", () => download(`${study.title}.notes.json`, JSON.stringify(study, null, 2), "application/json"));
 
 /* --- the anchor: stamped on the first keystroke --- */
 els.entry.addEventListener("beforeinput", () => {
   if (!study) return;
   if (pending === null && els.entry.value.trim() === ""){
-    pending = clamp(audio.currentTime - study.lag, 0, study.duration || audio.duration || 0);
+    pending = clamp(audio.currentTime - effLag(), 0, study.duration || audio.duration || 0);
     els.stamp.textContent = fmt(pending, true);
     els.stamp.classList.add("live");
     els.armed.classList.add("live");
@@ -1652,8 +2366,10 @@ els.entry.addEventListener("keydown", (e) => {
       if (n){
         n.t = clamp(n.t + dir * (e.shiftKey ? 1 : 0.25), 0, study.duration || 0);
         study.notes.sort((a,b) => a.t - b.t);
-        jump(Math.max(0, n.t - 0.4));
-        if (audio.paused) audio.play().catch(() => {});
+        // audition: play a breath from the new anchor, then stop
+        jump(Math.max(0, n.t - 0.25));
+        auditionEnd = n.t + 1.5;
+        playAudio();
         renderNotes(); save();
         return;
       }
@@ -1673,16 +2389,526 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+/* True when a keystroke should type rather than command. The note box only
+   counts once it has text in it — empty, it is a transport surface. */
+function isTyping(t){
+  if (!t) return false;
+  if (t === els.entry) return els.entry.value !== "";
+  return !!(t.isContentEditable || t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT");
+}
+
 /* --- space plays/pauses unless you are actually typing --- */
 document.addEventListener("keydown", (e) => {
   if (e.key !== " " && e.code !== "Space") return;
-  const t = e.target;
-  if (t === els.entry && els.entry.value !== "") return;          // mid-note
-  if (t !== els.entry && (t.isContentEditable ||
-      t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;  // ladder prompt, etc.
-  if (!study) return;
+  if (isTyping(e.target) || !study) return;
+  if (typeof onSpace === "function" && onSpace(e)) return;
   e.preventDefault();
   toggle();
+});
+
+/* ---------- the index ---------- */
+let dirHandle = null, dirReady = false, indexData = [], tagSel = null;
+
+async function ensureRead(h, ask){
+  try {
+    if ((await h.queryPermission({ mode: "read" })) === "granted") return true;
+    if (!ask) return false;
+    return (await h.requestPermission({ mode: "read" })) === "granted";
+  } catch (e) { return false; }
+}
+async function* walk(dir, depth){
+  for await (const [name, h] of dir.entries()){
+    if (name.startsWith(".")) continue;
+    if (h.kind === "file") yield [name, h];
+    else if (depth > 0) yield* walk(h, depth - 1);
+  }
+}
+function syncDirBtn(){
+  els.dirBtn.textContent = !dirHandle ? "add notes folder" : dirReady ? `folder: ${dirHandle.name}` : `reconnect ${dirHandle.name}`;
+  els.dirBtn.classList.toggle("on", !!dirHandle && dirReady);
+}
+
+async function buildIndex(){
+  const byId = new Map();
+  for (const r of await allSaved()) byId.set(r.id, { id: r.id, title: r.title, notes: r.notes || [], stamp: r.updated || 0 });
+  if (study) byId.set(study.id, { id: study.id, title: study.title, notes: study.notes, stamp: Date.now() });
+  if (dirHandle && dirReady){
+    try {
+      for await (const [name, h] of walk(dirHandle, 3)){
+        if (!/\.md$/i.test(name)) continue;
+        const f = await h.getFile();
+        const st = parseMd(await f.text(), "md:" + name, name);
+        if (!st.notes.length) continue;
+        // the same study already known from browser storage: keep whichever is newer
+        const dup = [...byId.values()].find(x => x.title.toLowerCase() === st.title.toLowerCase());
+        if (dup){ if (f.lastModified > dup.stamp && dup.id !== (study && study.id)){ dup.notes = st.notes; dup.stamp = f.lastModified; } }
+        else byId.set(st.id, { id: st.id, title: st.title, notes: st.notes, stamp: f.lastModified });
+      }
+    } catch (e) {}
+  }
+  indexData = [...byId.values()].filter(x => x.notes.length).sort((a,b) => a.title.localeCompare(b.title));
+}
+
+function renderIndex(){
+  const q = els.tagSearch.value.trim().toLowerCase();
+  const tags = new Set();
+  for (const s of indexData) for (const n of s.notes) for (const t of (n.tags || parseTags(n.text))) tags.add(t);
+  els.tagCloud.innerHTML = "";
+  for (const t of [...tags].sort()){
+    const b = document.createElement("button");
+    b.textContent = "#" + t;
+    b.setAttribute("aria-pressed", String(tagSel === t));
+    b.addEventListener("click", () => { tagSel = tagSel === t ? null : t; renderIndex(); });
+    els.tagCloud.appendChild(b);
+  }
+
+  els.tagList.innerHTML = "";
+  const songs = indexData.length;
+  if (!tagSel && !q){
+    els.tagNote.textContent = songs
+      ? `${songs} ${songs === 1 ? "study" : "studies"} indexed — pick a tag or search.`
+      : "Nothing indexed yet. Studies you open here are included; add a notes folder for the rest.";
+    return;
+  }
+  const esc = (x) => x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  let hits = 0;
+  for (const s of indexData){
+    const ns = s.notes
+      .filter(n => (!tagSel || (n.tags || parseTags(n.text)).includes(tagSel)) && (!q || n.text.toLowerCase().includes(q)))
+      .sort((a,b) => a.t - b.t);
+    if (!ns.length) continue;
+    const h = document.createElement("div");
+    h.className = "tsong";
+    h.textContent = s.title;
+    els.tagList.appendChild(h);
+    for (const n of ns){
+      hits++;
+      const r = document.createElement("div");
+      r.className = "trow";
+      r.tabIndex = 0;
+      let x = cellText(n);
+      if (q) x = x.replace(new RegExp(`(${esc(escapeHtml(q))})(?![^<]*>)`, "gi"), "<mark>$1</mark>");
+      r.innerHTML = `<span class="t">${fmt(n.t, true)}</span><span class="pnum" style="color:${passColor(n.pass)}">p${n.pass}</span><span class="x">${x}</span>`;
+      const go = () => goToIndexed(s, n);
+      r.addEventListener("click", go);
+      r.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+      els.tagList.appendChild(r);
+    }
+  }
+  els.tagNote.textContent = hits ? "" : "No notes match.";
+}
+
+async function goToIndexed(s, n){
+  let id = library.has(s.id) ? s.id : null;
+  if (!id) for (const [k, e] of library) if (e.study && e.study.title.toLowerCase() === s.title.toLowerCase()) id = k;
+  if (!id){ els.tagNote.textContent = `Open the MP3 for "${s.title}" first, then this jumps straight there.`; return; }
+  closeSheet(els.tagSheet);
+  if (!study || study.id !== id) await open(id);
+  const match = study.notes.find(m => Math.abs(m.t - n.t) < 0.06 && m.text === n.text);
+  if (match) selectNote(match.id, true, false);
+  else { jump(Math.max(0, n.t - PREROLL)); playAudio(); }
+}
+
+let sheetReturn = null;
+function openSheet(el){ sheetReturn = document.activeElement; el.hidden = false; }
+function closeSheet(el){
+  if (el === els.calSheet) calStop();
+  el.hidden = true;
+  if (sheetReturn && sheetReturn.focus) sheetReturn.focus();
+  if (study) els.entry.focus();
+}
+const openSheetEl = () => document.querySelector(".sheet:not([hidden])");
+
+els.indexBtn.addEventListener("click", async () => {
+  openSheet(els.tagSheet);
+  els.tagNote.textContent = "reading…";
+  if (!dirHandle) dirHandle = await recallHandle("__notesdir__");
+  dirReady = dirHandle ? await ensureRead(dirHandle, false) : false;
+  syncDirBtn();
+  await buildIndex();
+  renderIndex();
+  els.tagSearch.focus();
+});
+els.dirBtn.addEventListener("click", async () => {
+  try {
+    if (dirHandle && !dirReady) dirReady = await ensureRead(dirHandle, true);
+    else {
+      if (!window.showDirectoryPicker){ els.tagNote.textContent = "This browser can't read folders — use Chrome."; return; }
+      dirHandle = await window.showDirectoryPicker({ mode: "read" });
+      dirReady = true;
+      await rememberHandle("__notesdir__", dirHandle);
+    }
+  } catch (e) { if (!e || e.name !== "AbortError") els.tagNote.textContent = "Couldn't open that folder here — this needs the hosted page or ./study."; }
+  syncDirBtn();
+  els.tagNote.textContent = "reading…";
+  await buildIndex();
+  renderIndex();
+});
+els.tagClose.addEventListener("click", () => closeSheet(els.tagSheet));
+els.tagSearch.addEventListener("input", renderIndex);
+els.tagSheet.addEventListener("click", (e) => { if (e.target === els.tagSheet) closeSheet(els.tagSheet); });
+
+/* --- escape unwinds one layer at a time: sheet, tour, blind --- */
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  const sh = openSheetEl();
+  if (sh){ e.preventDefault(); e.stopImmediatePropagation(); closeSheet(sh); return; }
+  if (typeof onEscape === "function" && onEscape(e)){ e.preventDefault(); e.stopImmediatePropagation(); }
+}, true);
+
+/* ---------- tour: play it back, stopping at each flagged note ---------- */
+let tour = null;
+const touring = () => !!tour;
+function startTour(){
+  if (!study) return;
+  const plain = study.notes.filter(n => !isSection(n));
+  const flagged = plain.filter(n => n.star);
+  const src = (flagged.length ? flagged : plain).slice().sort((a,b) => a.t - b.t);
+  if (!src.length){ flashHint("nothing to tour yet — write a few notes, flag the ones that matter"); return; }
+  loopOn = false; syncLoop();
+  tour = { notes: src, last: -Infinity, prev: 0, waiting: null };
+  els.tourBtn.setAttribute("aria-pressed", "true");
+  jump(Math.max(0, src[0].t - PREROLL));
+  tour.prev = audio.currentTime;
+  playAudio();
+  flashHint(`tour of ${src.length} ${flagged.length ? "flagged " : ""}note${src.length === 1 ? "" : "s"} — space continues, esc ends`);
+}
+function tourTick(cur){
+  if (!tour || tour.waiting) return;
+  if (cur < tour.prev - 0.5 || cur > tour.prev + 1.5) tour.last = cur - 0.01;   // you scrubbed — pick up from here
+  tour.prev = cur;
+  const next = tour.notes.find(n => n.t > tour.last + 0.01);
+  const dur = study.duration || audio.duration || 0;
+  if (!next){ if (audio.ended || (dur && cur >= dur - 0.3)) endTour("tour complete"); return; }
+  if (!audio.paused && cur >= next.t){
+    audio.pause();
+    tour.waiting = next; tour.last = next.t;
+    hoverNote = next;
+    setPeek(next, "space continues · esc ends");
+    els.peek.classList.add("tour");
+  }
+}
+function tourContinue(){
+  tour.waiting = null; hoverNote = null; setPeek(null);
+  playAudio();
+}
+function endTour(msg){
+  if (!tour) return;
+  tour = null; hoverNote = null; setPeek(null);
+  els.tourBtn.setAttribute("aria-pressed", "false");
+  if (msg) flashHint(msg);
+}
+els.tourBtn.addEventListener("click", () => { if (tour) endTour("tour ended"); else startTour(); els.entry.focus(); });
+
+/* ---------- blind pass: nothing to look at but the song ---------- */
+let blind = false, blindAuto = false;
+function setBlind(on, auto){
+  blind = on; blindAuto = on && !!auto;
+  document.body.classList.toggle("blind", on);
+  els.blindBtn.setAttribute("aria-pressed", String(on));
+  els.blindNote.hidden = !on;
+  if (!on){ requestAnimationFrame(() => { layoutCanvas(); paintStatic(); renderPins(); }); }
+  if (study) els.entry.focus();
+}
+els.blindBtn.addEventListener("click", () => setBlind(!blind, false));
+
+/* ---------- hooks the core calls into ---------- */
+function onEnterStudy(){
+  // a brand-new study starts blind: pass one is for listening
+  if (study.pass === 1 && !study.notes.length) setBlind(true, true);
+}
+function onLeaveStudy(){ endTour(); if (blind) setBlind(false); }
+function onPassComplete(p){
+  if (blindAuto && p === 1){ setBlind(false); flashHint("pass one done — the screen is back"); }
+}
+function onSpace(e){
+  if (tour && tour.waiting){ e.preventDefault(); tourContinue(); return true; }
+  return false;
+}
+function onEscape(){
+  if (tour){ endTour("tour ended"); return true; }
+  if (blind && els.entry.value === ""){ setBlind(false); return true; }
+  return false;
+}
+
+/* ---------- lag calibration ---------- */
+const CAL_N = 8;
+let cal = null, calResult = null;
+function calIntro(){
+  els.calText.textContent = "You'll hear eight ticks at random moments. Press any key the instant you hear each one. " +
+    "This measures how fast your hands answer your ears — noticing something in a song takes longer than hearing a tick, " +
+    "so treat the result as a floor and nudge up if your stamps land late.";
+  els.calDots.innerHTML = Array.from({ length: CAL_N }, () => "<i></i>").join("");
+  els.calGo.textContent = "start"; els.calGo.hidden = false;
+  els.calUse.hidden = true; calResult = null;
+}
+function calStart(){
+  audio.pause();
+  calStop();
+  let c = null;
+  try { c = (ensureGraph() && FX.ctx) || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+  if (!c){ els.calText.textContent = "This browser can't play the ticks."; return; }
+  if (c.state === "suspended") c.resume();
+  cal = { ctx: c, i: 0, results: [], expect: null, timer: null };
+  els.calGo.hidden = true;
+  els.calText.textContent = "Listening… press any key on each tick.";
+  calNext();
+}
+function calNext(){
+  if (!cal) return;
+  if (cal.i >= CAL_N) return calFinish();
+  const dots = els.calDots.children;
+  for (let k = 0; k < dots.length; k++) dots[k].classList.toggle("now", k === cal.i);
+  const delay = 1.1 + Math.random() * 1.9;
+  const at = cal.ctx.currentTime + delay;
+  const o = cal.ctx.createOscillator(), g = cal.ctx.createGain();
+  o.frequency.value = 1760;
+  g.gain.setValueAtTime(0, at);
+  g.gain.linearRampToValueAtTime(0.4, at + 0.002);
+  g.gain.exponentialRampToValueAtTime(0.001, at + 0.07);
+  o.connect(g); g.connect(cal.ctx.destination);
+  o.start(at); o.stop(at + 0.09);
+  const latency = (cal.ctx.outputLatency || 0) + (cal.ctx.baseLatency || 0);
+  cal.expect = performance.now() + (delay + latency) * 1000;
+  cal.timer = setTimeout(() => calMark(null), (delay + 2.2) * 1000);   // no key at all: a miss
+}
+function calMark(stamp){
+  if (!cal || cal.expect === null) return;
+  const dt = stamp === null ? null : (stamp - cal.expect) / 1000;
+  if (dt !== null && dt < 0.06) return;                 // before the tick could have been heard
+  clearTimeout(cal.timer);
+  const dot = els.calDots.children[cal.i];
+  dot.classList.remove("now");
+  if (dt !== null && dt <= 2){ cal.results.push(dt); dot.classList.add("hit"); } else dot.classList.add("miss");
+  cal.expect = null; cal.i++;
+  setTimeout(calNext, 350);
+}
+function calFinish(){
+  const r = cal.results.slice().sort((a,b) => a - b);
+  calStop();
+  if (r.length < 5){ els.calText.textContent = "Too many misses to trust a number. Try again somewhere quieter."; els.calGo.textContent = "again"; els.calGo.hidden = false; return; }
+  const med = r[Math.floor(r.length / 2)];
+  calResult = Math.round(med * 20) / 20;
+  els.calText.textContent = `Your hands answer in ${med.toFixed(2)}s. Your lag is ${study ? study.lag.toFixed(2) : "1.50"}s. ` +
+    `If stamps have been landing late, the gap between those is your noticing time — keep it; if they've been landing early, come down toward ${calResult.toFixed(2)}s.`;
+  els.calUse.textContent = `use ${calResult.toFixed(2)}s`;
+  els.calUse.hidden = !study;
+  els.calGo.textContent = "again"; els.calGo.hidden = false;
+}
+function calStop(){
+  if (!cal) return;
+  clearTimeout(cal.timer);
+  cal = null;
+}
+document.addEventListener("keydown", (e) => {
+  if (!cal || els.calSheet.hidden || e.key === "Escape" || e.key === "Tab") return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  if (!e.repeat) calMark(e.timeStamp);
+}, true);
+els.calSheet.addEventListener("pointerdown", (e) => { if (cal && !e.target.closest("button")) calMark(e.timeStamp); });
+els.calBtn.addEventListener("click", () => { calIntro(); openSheet(els.calSheet); els.calGo.focus(); });
+els.calGo.addEventListener("click", (e) => { e.currentTarget.blur(); calIntro(); calStart(); });
+els.calUse.addEventListener("click", () => {
+  if (study && calResult !== null){ study.lag = clamp(calResult, 0, 6); syncLcd(); save(); flashHint(`lag set to ${calResult.toFixed(2)}s`); }
+  closeSheet(els.calSheet);
+});
+els.calClose.addEventListener("click", () => closeSheet(els.calSheet));
+
+/* ---------- poster: the whole study as one SVG ---------- */
+function posterSvg(){
+  const W = 1600, M = 72, IW = W - 2 * M;
+  const dur = study.duration || audio.duration || 1;
+  const X = (t) => M + (t / dur) * IW;
+  const C = { ink: "#121211", ink2: "#6B6760", ink3: "#A09B93", line: "#E5E2DB", accent: "#FF4A00" };
+  const x = (v) => String(v).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const sans = 'font-family="Inter, Helvetica Neue, Helvetica, Arial, sans-serif"';
+  const mono = 'font-family="IBM Plex Mono, SF Mono, Menlo, monospace"';
+  const out = [];
+  const notes = study.notes.filter(n => !isSection(n)).sort((a,b) => a.t - b.t);
+  const secs = study.notes.filter(isSection).sort((a,b) => a.t - b.t);
+  const completed = Math.min(study.pass - 1, study.targetPasses);
+
+  out.push(`<text x="${M}" y="${M + 40}" ${sans} font-size="44" font-weight="600" fill="${C.ink}">${x(study.title)}</text>`);
+  out.push(`<text x="${M}" y="${M + 74}" ${mono} font-size="14" fill="${C.ink2}">${x(`${study.fileName} · ${fmt(dur)} · ${completed} of ${study.targetPasses} passes · ${new Date().toLocaleDateString()}`)}</text>`);
+
+  // pins, stacked by pass
+  const laneTop = M + 112, span = Math.max(1, study.targetPasses - 1);
+  notes.forEach(n => {
+    const py = laneTop + (clamp(n.pass - 1, 0, span) / span) * 70;
+    out.push(`<rect x="${(X(n.t) - 4).toFixed(1)}" y="${py.toFixed(1)}" width="8" height="${n.star ? 14 : 8}" fill="${passColor(n.pass)}"/>`);
+  });
+
+  // waveform
+  const wTop = laneTop + 96, wH = 170, mid = wTop + wH / 2;
+  out.push(`<rect x="${M}" y="${wTop}" width="${IW}" height="${wH}" fill="none" stroke="${C.line}"/>`);
+  const step = dur > 420 ? 60 : 30;
+  for (let t = step; t < dur; t += step){
+    out.push(`<line x1="${X(t).toFixed(1)}" y1="${wTop}" x2="${X(t).toFixed(1)}" y2="${wTop + wH}" stroke="${C.line}"/>`);
+    out.push(`<text x="${(X(t) + 4).toFixed(1)}" y="${wTop + 13}" ${mono} font-size="10" fill="${C.ink3}">${fmt(t)}</text>`);
+  }
+  if (peaks){
+    const bars = 640, bw = IW / bars;
+    let d = "";
+    for (let b = 0; b < bars; b++){
+      const i0 = Math.floor(b * peaks.n / bars), i1 = Math.max(i0 + 1, Math.floor((b + 1) * peaks.n / bars));
+      let lo = 0, hi = 0;
+      for (let i = i0; i < i1; i++){ lo = Math.min(lo, peaks.min[i]); hi = Math.max(hi, peaks.max[i]); }
+      const top = mid - hi * wH * 0.46, h = Math.max(1, (hi - lo) * wH * 0.46);
+      d += `M${(M + b * bw).toFixed(1)} ${top.toFixed(1)}h${(bw * 0.72).toFixed(2)}v${h.toFixed(1)}h${(-bw * 0.72).toFixed(2)}z`;
+    }
+    out.push(`<path d="${d}" fill="${C.ink2}" fill-opacity=".55"/>`);
+  }
+  secs.forEach(n => {
+    out.push(`<line x1="${X(n.t).toFixed(1)}" y1="${wTop}" x2="${X(n.t).toFixed(1)}" y2="${wTop + wH}" stroke="${C.ink2}" stroke-opacity=".6"/>`);
+    out.push(`<text x="${(X(n.t) + 4).toFixed(1)}" y="${wTop + wH - 6}" ${mono} font-size="11" fill="${C.ink}">${x(sectionName(n))}</text>`);
+  });
+
+  // time spent
+  const hTop = wTop + wH + 4;
+  let hmax = 1;
+  for (const v of study.heat) if (v > hmax) hmax = v;
+  for (let s = 0; s < study.heat.length; s++){
+    const v = (study.heat[s] || 0) / hmax;
+    if (v > 0 && s < dur) out.push(`<rect x="${X(s).toFixed(1)}" y="${hTop}" width="${Math.max(1, (Math.min(s + 1, dur) - s) * IW / dur).toFixed(2)}" height="10" fill="${C.accent}" fill-opacity="${(0.1 + v * 0.72).toFixed(2)}"/>`);
+  }
+
+  // numbered ticks, staggered so neighbours don't collide
+  const tTop = hTop + 18;
+  notes.forEach((n, i) => {
+    const row = i % 3, tx = X(n.t);
+    out.push(`<line x1="${tx.toFixed(1)}" y1="${tTop}" x2="${tx.toFixed(1)}" y2="${tTop + 6 + row * 14}" stroke="${passColor(n.pass)}"/>`);
+    out.push(`<text x="${tx.toFixed(1)}" y="${tTop + 17 + row * 14}" ${mono} font-size="10" text-anchor="middle" fill="${C.ink2}">${i + 1}</text>`);
+  });
+
+  // the notes, in three columns
+  const lTop = tTop + 84, gap = 44, colW = (IW - 2 * gap) / 3, maxCh = Math.floor(colW / 8.1);
+  const wrap = (txt) => {
+    const lines = [];
+    for (const para of txt.split("\n")){
+      let cur = "";
+      for (const w of para.split(/\s+/)){
+        if ((cur + " " + w).trim().length > maxCh && cur){ lines.push(cur); cur = w; }
+        else cur = (cur + " " + w).trim();
+      }
+      lines.push(cur);
+    }
+    return lines;
+  };
+  const items = notes.map((n, i) => ({ n, i, lines: wrap(n.text) }));
+  const hOf = (it) => 22 + it.lines.length * 21 + 16;
+  const total = items.reduce((a, it) => a + hOf(it), 0);
+  let col = 0, cy = lTop, colBottom = lTop;
+  for (const it of items){
+    if (col < 2 && cy - lTop > total / 3 && cy > lTop){ col++; cy = lTop; }
+    const cx = M + col * (colW + gap);
+    out.push(`<rect x="${cx}" y="${cy - 10}" width="8" height="8" fill="${passColor(it.n.pass)}"/>`);
+    out.push(`<text x="${cx + 16}" y="${cy - 2}" ${mono} font-size="11" fill="${C.ink2}">${it.i + 1}  ${fmt(it.n.t, true)}  p${it.n.pass}${it.n.star ? "  ★" : ""}</text>`);
+    it.lines.forEach((ln, k) => out.push(`<text x="${cx}" y="${cy + 20 + k * 21}" ${sans} font-size="15" ${it.n.star ? 'font-weight="600"' : ""} fill="${C.ink}">${x(ln)}</text>`));
+    cy += hOf(it);
+    colBottom = Math.max(colBottom, cy);
+  }
+  const H = colBottom + M;
+  out.push(`<text x="${W - M}" y="${H - 28}" ${mono} font-size="11" text-anchor="end" fill="${C.ink3}">song.study</text>`);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="#FFFFFF"/>${out.join("")}</svg>`;
+}
+els.posterBtn.addEventListener("click", () => { if (study) download(`${study.title}.poster.svg`, posterSvg(), "image/svg+xml"); });
+
+/* ---------- MIDI: a knob for scrub, a knob for lag ---------- */
+const midi = { access: null, map: {}, learning: null };
+try { midi.map = JSON.parse(localStorage.getItem("songstudy.midi") || "{}") || {}; } catch (e) {}
+function midiLabel(m){ return !m ? "—" : `${m.kind === "cc" ? "cc" : "note"} ${m.num} · ch ${m.ch + 1}`; }
+function syncMidi(){
+  for (const el of els.midiMap.querySelectorAll("[data-show]")) el.textContent = midiLabel(midi.map[el.dataset.show]);
+  for (const b of els.midiMap.querySelectorAll("[data-learn]")){
+    const on = midi.learning === b.dataset.learn;
+    b.textContent = on ? "move a control…" : "learn";
+    b.classList.toggle("on", on);
+  }
+  if (!midi.access) return;
+  const names = [...midi.access.inputs.values()].map(i => i.name);
+  els.midiStatus.textContent = names.length ? `Listening to ${names.join(", ")}.` : "Connected, but no MIDI devices are plugged in.";
+}
+function onMidi(ev){
+  const [st, d1, d2] = ev.data;
+  const type = st & 0xF0, ch = st & 0x0F;
+  let sig = null;
+  if (type === 0xB0) sig = { kind: "cc", ch, num: d1, val: d2 };
+  else if (type === 0x90 && d2 > 0) sig = { kind: "note", ch, num: d1, val: 127 };
+  if (!sig) return;
+  if (midi.learning){
+    midi.map[midi.learning] = { kind: sig.kind, ch: sig.ch, num: sig.num };
+    midi.learning = null;
+    try { localStorage.setItem("songstudy.midi", JSON.stringify(midi.map)); } catch (e) {}
+    syncMidi();
+    return;
+  }
+  if (!study) return;
+  for (const [act, m] of Object.entries(midi.map)){
+    if (m.kind !== sig.kind || m.ch !== sig.ch || m.num !== sig.num) continue;
+    if (act === "scrub"){ const dur = study.duration || audio.duration || 0; if (dur) jump((sig.val / 127) * dur); }
+    else if (act === "lag"){ study.lag = Math.round((sig.val / 127) * 4 * 20) / 20; syncLcd(); save(); }
+    else if (act === "play" && (sig.kind === "note" || sig.val >= 64)) toggle();
+  }
+}
+async function midiConnect(){
+  if (midi.access) return syncMidi();
+  if (!navigator.requestMIDIAccess){ els.midiStatus.textContent = "This browser has no Web MIDI — use Chrome."; return; }
+  els.midiStatus.textContent = "Asking for MIDI access…";
+  try { midi.access = await navigator.requestMIDIAccess(); }
+  catch (e) { els.midiStatus.textContent = "MIDI access was refused."; return; }
+  const bind = () => { for (const inp of midi.access.inputs.values()) inp.onmidimessage = onMidi; syncMidi(); };
+  midi.access.onstatechange = bind;
+  bind();
+}
+els.midiBtn.addEventListener("click", () => { openSheet(els.midiSheet); syncMidi(); midiConnect(); });
+els.midiClose.addEventListener("click", () => { midi.learning = null; syncMidi(); closeSheet(els.midiSheet); });
+els.midiMap.addEventListener("click", (e) => {
+  const b = e.target.closest("[data-learn]");
+  if (!b) return;
+  midi.learning = midi.learning === b.dataset.learn ? null : b.dataset.learn;
+  syncMidi();
+});
+// reconnect quietly if a mapping already exists and the browser already said yes
+if (Object.keys(midi.map).length && navigator.permissions){
+  navigator.permissions.query({ name: "midi" }).then(p => { if (p.state === "granted") midiConnect(); }).catch(() => {});
+}
+
+/* --- [ ] set the loop, \ switches it on and off, | clears it --- */
+document.addEventListener("keydown", (e) => {
+  if (!study || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (!["[", "]", "\\", "|"].includes(e.key) || isTyping(e.target)) return;
+  e.preventDefault();
+  if (e.key === "[") setLoopA();
+  else if (e.key === "]") setLoopB();
+  else if (e.key === "|") clearLoop();
+  else toggleLoop();
+});
+
+/* --- rename the study by clicking its name --- */
+els.rTrack.addEventListener("click", () => {
+  if (!study || els.rTrack.isContentEditable) return;
+  const el = els.rTrack, before = study.title;
+  el.contentEditable = "plaintext-only";
+  if (el.contentEditable !== "plaintext-only") el.contentEditable = "true";
+  el.classList.add("editing");
+  el.focus();
+  try { const r = document.createRange(); r.selectNodeContents(el); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); } catch (err) {}
+  let over = false;
+  const finish = (keep) => {
+    if (over) return; over = true;
+    el.contentEditable = "false"; el.classList.remove("editing");
+    const t = el.textContent.replace(/\s+/g, " ").trim();
+    if (keep && t && t !== before){ study.title = t; save(); renderStudies(); }
+    el.textContent = study.title;
+    el.removeEventListener("keydown", onKey);
+    els.entry.focus();
+  };
+  const onKey = (e) => {
+    if (e.key === "Enter"){ e.preventDefault(); finish(true); }
+    else if (e.key === "Escape"){ e.preventDefault(); finish(false); }
+  };
+  el.addEventListener("keydown", onKey);
+  el.addEventListener("blur", () => finish(true), { once: true });
 });
 
 /* --- scrub --- */
@@ -1707,14 +2933,14 @@ els.theme.addEventListener("click", () => {
   const next = cur === "dark" ? "light" : cur === "light" ? "dark" : (matchMedia("(prefers-color-scheme: dark)").matches ? "light" : "dark");
   document.documentElement.setAttribute("data-theme", next);
   try { localStorage.setItem("songstudy.theme", next); } catch (e) {}
-  heatDirty = true;
+  refreshTokens();
 });
 try {
   const t = localStorage.getItem("songstudy.theme");
   if (t) document.documentElement.setAttribute("data-theme", t);
 } catch (e) {}
 
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { heatDirty = true; });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", refreshTokens);
 new ResizeObserver(() => { layoutCanvas(); paintStatic(); renderPins(); }).observe(els.wave);
 
 window.addEventListener("beforeunload", () => {

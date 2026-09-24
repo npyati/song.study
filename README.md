@@ -1,103 +1,125 @@
 # song.study
 
-A single-page tool for listening to one song ten times in a row and writing down
-what you hear.
+A tool for listening to one song ten times in a row and writing down what you hear.
 
-The premise is that repeat listening is a method, not just repetition. On the
-second pass you hear the hook. On the eighth you hear the shaker that drops out
-for one bar before the chorus. Most note-taking tools throw that away by merging
-everything into one list — this one keeps the pass number, so you can watch your
-own attention move.
+**Open it: https://npyati.github.io/song.study/** — then drag an MP3 onto the window.
+Your audio never leaves your machine; the page reads it locally.
 
-![A waveform with note pins stacked by pass, a listening prompt, and a ledger of
-timestamped notes](docs/screenshot.png)
+Repeat listening is a method, not just repetition. On the second pass you hear the
+hook. On the eighth you hear the shaker that drops out for one bar before the chorus.
+Most note-taking tools throw that away by merging everything into one list. This one
+keeps the pass number, so you can watch your own attention move.
 
-## The two ideas it's built on
+![A waveform with note pins stacked by pass, section markers, a listening prompt with
+filter controls, and a ledger of timestamped notes](docs/screenshot.png)
 
-**Typing competes with listening.** If your hands and eyes are on a text box you
-have stopped doing the thing. So the timestamp is taken on your **first
-keystroke**, not when you press Enter. You hear something, you start typing, the
-anchor is already set, and you can take as long as you want finishing the
-sentence while the song plays on.
+## The ideas it's built on
 
-**You notice things late.** You register a moment a second or two after it
-happens, so every anchor is pulled back by an adjustable lag offset (default
-1.5s). Tune it after one pass. Jumping to a note starts playback four seconds
-early, so you hear the approach rather than the aftermath.
+**Typing competes with listening.** If your hands and eyes are on a text box, you've
+stopped doing the thing. So the timestamp is taken on your **first keystroke**, not
+when you press Enter. You hear something, start typing, and the anchor is already
+set. Take as long as you like finishing the sentence while the song plays on.
 
-## Running it
+**You notice things late.** Every anchor is pulled back by a lag offset (default
+1.5s) to cover the gap between hearing a thing and reaching for the keys. It scales
+with playback speed, and it doesn't apply while paused — paused, you aren't late,
+you're placed. **calibrate** measures how fast your hands answer your ears, which
+gives you a floor for it.
 
-```
-./study.command
-```
+**Each pass is for something.** The listening prompt above the note box gives every
+pass a job: just listen / form / drums / bass / lyrics / vocals / arrangement / mix /
+the moment you keep returning to / free. Every prompt is editable. A new study starts
+**blind**: pass one hides everything except the note box, and the screen comes back
+when the pass ends.
 
-That serves the folder on `127.0.0.1:8788` and opens Chrome. It needs to be a
-real origin rather than `file://`, because Chrome will not hold write permission
-on your notes file across sessions for an opaque origin.
+**The prompts come with filters.** *listen through* runs the song through a
+low-pass, a band around the voice, or a high-pass — and a stereo matrix that can play
+mono, left, right, or **side**: only what differs between the channels, which is the
+width of the mix and nothing else. The bass pass defaults to lows and the mix pass to
+side. Your choices stick to the pass. It's all Web Audio in the page.
 
-Then drag an MP3 onto the window. Chrome only — it leans on the File System
-Access API.
+**A pass has to be a pass.** One only counts if you heard three-quarters of the song
+since the last one — skipping to the last ten seconds doesn't count. At the target
+the study finishes: playback stops and the prompt asks for the thesis.
 
-## Using it
-
-Click **save to .md** and pick where your notes go. Every change is written
-there from that point on. Chrome drops write permission between sessions, so
-next time the button reads `reconnect <name>.md` — one click and it resumes,
-reading the file back in as the authority.
+## Keys
 
 | key | |
 |---|---|
 | `space` | play / pause, unless you're mid-note |
-| `←` `→` | scrub 5s, or nudge a selected note ±0.25s (`shift` for ±1s) |
+| `←` `→` | scrub 5s — or, with a note selected, nudge it ±0.25s (`shift` ±1s) and hear a breath from the new spot |
 | `alt` `←` `→` | move the pending timestamp while you're still typing |
-| `enter` | log the note |
+| `enter` | log the note · `shift+enter` for a new line |
+| `[` `]` | set loop start / end · `\` loop on and off without losing the points · `\|` clears |
 | `#tag` | anything with a hash becomes a tag |
-| `s` | flag a note (with a row focused) |
-| `esc` | clear the box |
+| `=name` | a note starting with `=` marks a section — `=chorus`, `=bridge` — drawn on the waveform |
+| `esc` | clear the box, end a tour, leave the blind pass, close a panel |
 
-The **listening prompt** above the text box is what the current pass is for. It
-defaults to a ladder — just listen / form / drums / bass / lyrics / vocals /
-arrangement / mix / the moment you keep returning to / free — and every line is
-editable and saved per study. Pass one is deliberately a no-notes pass.
+Click a note to hear it from four seconds before, and edit its text where it sits.
+Click the track name to rename the study.
 
-The waveform carries three things: note pins stacked vertically by pass and
-colour-ramped across ten, a band underneath showing which seconds you have
-actually spent time on, and a 30-second grid. Flagged notes get taller pins. The
-heat band is the interesting one — it catches the passage you kept rewinding to
-and never wrote a word about.
+## Looking back
+
+- **Waveform** — pins stacked by pass, section boundaries, and a band underneath
+  showing which seconds you've actually spent time on. Hover a pin to read its note.
+  **spectrum** draws a spectrogram behind it, lows at the bottom.
+- **list / compare / map** — every note by pass or by time; two passes side by side,
+  with notes within three seconds of each other on one row; or a grid of passes
+  against ten-second columns showing where you wrote something. The map shows
+  presence and flags only. No counts.
+- **tour** — plays the song back and stops at each flagged note to show it to you.
+- **index** — searches every note across every study, with tag filters. Point it at
+  a notes folder to include studies this browser hasn't seen.
+- **poster** — the whole study as one printable SVG: waveform, pins, sections, time
+  spent, and every note, numbered against the timeline.
+- **midi** — map a knob to scrub, a knob to lag, and a button to play.
 
 ## Your notes are a Markdown file
 
-Plain text, readable without this tool, diffable, yours:
+Click **save to .md** and pick where the notes live. Every change is written there.
+Edit the file in Obsidian or anything else while the app is open and it picks up the
+change within a couple of seconds. Chrome drops write permission between sessions, so
+next time the button reads `reconnect <name>.md` — one click and you're back.
 
 ```markdown
 ---
-title: O Green World
-file: O Green World.mp3
-duration: 264.31
+title: "O Green World"
+file: "O Green World.mp3"
+duration: 275.40
 pass: 4
 targetPasses: 10
-lag: 1.75
+lag: 1.5
 prompts:
-  1: just listen — no notes
-  2: form — where are the sections
+  1: "just listen — no notes"
+  2: "form — where are the sections"
+filters:
+  8: full side
 ---
 
 ## Pass 2 — form — where are the sections
 
+- **[0:00.4]** =intro
 - **[0:14.2]** drum machine is dry, almost no room on it
 - ★ **[0:41.8]** #bass enters under the second line, way later than I remembered
 ```
 
-Round-trip tested: multi-line notes, Markdown metacharacters, flags and
-timestamps past ten minutes all survive, and a second write is byte-identical.
+Continuation lines are indented two spaces; blank lines inside a note survive.
+Files from older versions, without quoted values, still load.
 
-Two things stay out of the file on purpose. The heat band is derived playback
-telemetry and would bury the notes under 250 numbers. Note ids are regenerated
-per session. Both live in browser storage, which also keeps a mirror of
-everything as crash safety for the window before you have bound a file.
+The heat band is kept in browser storage rather than the file, so the file stays
+something you'd want to read. Browser storage also mirrors everything as crash
+safety for the window before you've bound a file.
+
+## Running it locally
+
+The hosted page is the easy way. To run from a checkout, `./study.command` serves
+the folder on `127.0.0.1:8788` and opens Chrome. Opening `index.html` directly also
+works, but a `file://` page has no real origin and Chrome won't remember file
+permissions for it.
+
+Chrome or Edge — it leans on the File System Access API.
 
 ## Shape of it
 
-One `index.html`, no build step, no dependencies, no server beyond a static file
-handler, no network calls. Your audio and your notes never leave the machine.
+One `index.html`. No build step, no dependencies, no server beyond a static file
+host, no network calls except the web fonts.
