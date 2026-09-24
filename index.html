@@ -206,6 +206,7 @@ body.blind .scope, body.blind .peek,
 body.blind .ledger, body.blind .keymap,
 body.blind .lcd .readout:not(.keep), body.blind .lcd .armed{display:none}
 body.blind .work{grid-template-columns:minmax(0,1fr)}
+body.blind .lcd .readout.keep{border-left:0;padding-left:14px}
 body.blind .capture{border-right:0;max-width:720px;margin:0 auto;width:100%}
 
 /* ---------- work ---------- */
@@ -391,7 +392,7 @@ body.drag .device{border-color:var(--accent)}
     <button class="key" id="expMd" disabled>.md</button>
     <button class="key" id="expJson" disabled>.json</button>
     <button class="key" id="posterBtn" disabled title="The whole study as one printable SVG">poster</button>
-    <button class="key" id="blindBtn" disabled aria-pressed="false" title="Hide everything but the note box">blind</button>
+    <button class="key" id="blindBtn" disabled aria-pressed="false" title="Hide everything but the note box until this pass ends">blind</button>
     <button class="key" id="indexBtn" title="Search every note in every study">index</button>
     <button class="key" id="theme" title="Toggle theme">◐</button>
     <input type="file" id="file" accept="audio/*,.json,.md" multiple class="hidden">
@@ -2614,8 +2615,8 @@ els.blindBtn.addEventListener("click", () => setBlind(!blind, false));
 
 /* ---------- hooks the core calls into ---------- */
 function onEnterStudy(){
-  // a brand-new study starts blind: pass one is for listening
-  if (study.pass === 1 && !study.notes.length) setBlind(true, true);
+  // blind is offered, never imposed — hiding the screen on load reads as a crash
+  if (study.pass === 1 && !study.notes.length) flashHint("pass one is for listening — blind, up top, hides the screen until it ends");
 }
 function onLeaveStudy(){ endTour(); if (blind) setBlind(false); }
 function onPassComplete(p){

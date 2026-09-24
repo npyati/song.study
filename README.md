@@ -28,9 +28,9 @@ gives you a floor for it.
 
 **Each pass is for something.** The listening prompt above the note box gives every
 pass a job: just listen / form / drums / bass / lyrics / vocals / arrangement / mix /
-the moment you keep returning to / free. Every prompt is editable. A new study starts
-**blind**: pass one hides everything except the note box, and the screen comes back
-when the pass ends.
+the moment you keep returning to / free. Every prompt is editable. **blind** hides
+everything except the note box, and the screen comes back when the pass ends — made
+for pass one.
 
 **The prompts come with filters.** *listen through* runs the song through a
 low-pass, a band around the voice, or a high-pass — and a stereo matrix that can play
@@ -53,7 +53,7 @@ the study finishes: playback stops and the prompt asks for the thesis.
 | `[` `]` | set loop start / end · `\` loop on and off without losing the points · `\|` clears |
 | `#tag` | anything with a hash becomes a tag |
 | `=name` | a note starting with `=` marks a section — `=chorus`, `=bridge` — drawn on the waveform |
-| `esc` | clear the box, end a tour, leave the blind pass, close a panel |
+| `esc` | clear the box, end a tour, leave blind, close a panel |
 
 Click a note to hear it from four seconds before, and edit its text where it sits.
 Click the track name to rename the study.
