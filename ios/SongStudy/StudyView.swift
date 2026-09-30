@@ -21,6 +21,7 @@ struct StudyView: View {
             }
         }
         .background(T.ground.ignoresSafeArea())
+        .toolbar(.visible, for: .navigationBar)
         .navigationTitle(m.study.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { ToolbarItem(placement: .topBarTrailing) { menu } }
@@ -101,7 +102,7 @@ struct StudyView: View {
             .overlay(Rectangle().stroke(typing ? T.accent : T.line2, lineWidth: 1))
 
             HStack {
-                Text(m.hint ?? (m.status.isEmpty ? "return logs it · the stamp is your first keystroke" : m.status))
+                Text(m.hint ?? m.status)
                     .font(T.mono(10)).foregroundStyle(m.hint == nil ? T.ink3 : T.accent)
                     .lineLimit(2)
                 Spacer()
@@ -113,9 +114,7 @@ struct StudyView: View {
     }
 
     private var placeholder: String {
-        if m.study.done { return "The study is complete. What is this song, now?" }
-        if m.study.pass == 1 { return "Pass one is for listening." }
-        return "Type the moment you hear it"
+        m.study.done ? "thesis" : "note"
     }
 
     // MARK: menu
@@ -302,8 +301,7 @@ struct Ledger: View {
             .padding(.horizontal, 16).padding(.bottom, 6)
 
             if m.study.notes.isEmpty {
-                Text("Nothing logged yet. Play, and start typing whenever something catches you — the stamp is set on your first keystroke.")
-                    .font(.system(size: 13)).foregroundStyle(T.ink3)
+                Text("nothing logged yet").font(T.mono(11)).foregroundStyle(T.ink3)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .padding(16)
             } else {

@@ -48,7 +48,6 @@ final class StudyModel: ObservableObject {
             player.onEnd = { [weak self] in self?.reachedEnd() }
             player.load(local, title: study.title)
             phase = .ready
-            if study.pass == 1 && study.notes.isEmpty { flash("pass one is for listening. write if you have to.") }
             peaks = await Task.detached(priority: .utility) { await Peaks.compute(local) }.value
         } catch {
             phase = .failed("Couldn't get \(song.url.lastPathComponent) from iCloud. Check that it has finished uploading.")

@@ -7,24 +7,13 @@ struct LibraryView: View {
 
     var body: some View {
         NavigationStack {
-            Group {
+            VStack(spacing: 0) {
+                header
                 if library.folder == nil { welcome } else { list }
             }
             .background(T.ground.ignoresSafeArea())
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    HStack(spacing: 7) {
-                        Rectangle().fill(T.accent).frame(width: 7, height: 7)
-                        Text("song.study").font(T.mono(13, .semibold)).foregroundStyle(T.ink)
-                    }
-                }
-                if library.folder != nil {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("folder") { picking = true }.buttonStyle(Key())
-                    }
-                }
-            }
-            .navigationBarTitleDisplayMode(.inline)
+            // our own flat header — the system bar wraps items in glass bubbles
+            .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: Song.self) { song in StudyView(song: song) }
             .sheet(isPresented: $picking) {
                 FolderPicker { library.choose($0) }.ignoresSafeArea()
@@ -33,27 +22,38 @@ struct LibraryView: View {
         }
     }
 
+    private var header: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 8) {
+                Rectangle().fill(T.accent).frame(width: 7, height: 7)
+                Text("song.study").font(T.mono(14, .semibold)).foregroundStyle(T.ink)
+                Spacer()
+                if library.folder != nil {
+                    Text(library.folder?.lastPathComponent ?? "").font(T.mono(11)).foregroundStyle(T.ink3).lineLimit(1)
+                    Button("folder") { picking = true }.buttonStyle(Key())
+                }
+            }
+            .padding(.horizontal, 16).padding(.vertical, 10)
+            Rectangle().fill(T.line2).frame(height: 1)
+        }
+    }
+
     private var welcome: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            Spacer()
-            Text("Listen to one song ten times. Write down what you hear.")
-                .font(.system(size: 22, weight: .semibold)).foregroundStyle(T.ink)
-            Text("Pick a folder in iCloud Drive. Put your MP3s in it from your Mac; your notes are saved beside each one as a .notes.md file — the same files the web app reads.")
-                .font(.system(size: 15)).foregroundStyle(T.ink2)
+        VStack(alignment: .leading, spacing: 12) {
             if let p = library.problem { Text(p).font(T.mono(11)).foregroundStyle(T.accent) }
             Button("choose a folder") { picking = true }
                 .buttonStyle(Key(on: true, fill: T.accent))
-            Spacer(); Spacer()
+            Spacer()
         }
-        .padding(24)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
     }
 
     private var list: some View {
         List {
             Section {
                 if library.songs.isEmpty {
-                    Text("No audio in \(library.folder?.lastPathComponent ?? "this folder") yet. Add MP3s from your Mac — iCloud Drive › \(library.folder?.lastPathComponent ?? "") — then pull to refresh.")
-                        .font(.system(size: 14)).foregroundStyle(T.ink2)
+                    Text("no audio in this folder").font(T.mono(11)).foregroundStyle(T.ink3)
                         .listRowBackground(T.surface)
                 }
                 ForEach(library.songs) { song in
@@ -62,15 +62,13 @@ struct LibraryView: View {
                             Text(song.title).font(.system(size: 15)).foregroundStyle(T.ink)
                             HStack(spacing: 10) {
                                 if song.hasNotes { Lbl("notes", color: T.accent) }
-                                if !song.downloaded { Lbl("in icloud — downloads when opened") }
+                                if !song.downloaded { Lbl("icloud") }
                             }
                         }
                         .padding(.vertical, 3)
                     }
                     .listRowBackground(T.surface)
                 }
-            } header: {
-                Lbl(library.folder?.lastPathComponent ?? "")
             }
         }
         .listStyle(.plain)
