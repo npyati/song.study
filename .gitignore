@@ -12,3 +12,8 @@ library/
 todo.md
 
 .DS_Store
+
+# iOS build output
+ios/build/
+ios/**/xcuserdata/
+*.xcuserstate

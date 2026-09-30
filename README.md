@@ -110,6 +110,25 @@ The heat band is kept in browser storage rather than the file, so the file stays
 something you'd want to read. Browser storage also mirrors everything as crash
 safety for the window before you've bound a file.
 
+## On iPhone
+
+`ios/` is a native SwiftUI app with the same core: the first-keystroke stamp and
+lag, the listening prompts, honest pass counting, the ledger with flags and
+sections, the waveform with pins and time spent, and playback that keeps going
+with the screen locked.
+
+It reads MP3s from a folder you pick in iCloud Drive and writes each song's notes
+beside it as `Song Title.notes.md` — the same file, in the same format, that the web
+app reads and writes. Start a study on the phone, continue it at your desk. The
+Swift and JavaScript implementations of the format are tested against each other:
+a file written by one round-trips byte-for-byte through the other.
+
+Not on the phone yet: listening filters, spectrogram, compare and map, tour, index,
+poster, MIDI.
+
+To build: `brew install xcodegen`, then `cd ios && xcodegen generate` and open
+`SongStudy.xcodeproj`.
+
 ## Running it locally
 
 The hosted page is the easy way. To run from a checkout, `./study.command` serves
